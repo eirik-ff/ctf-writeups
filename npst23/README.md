@@ -716,3 +716,111 @@ print(flag)
 > \- Mellomleder
 
 
+
+## Dag 11
+
+### Flagg
+
+`NSM{9c7cac722d55da1dbfa13025d85efeed45e9ddea2796c0e5ea2fda81ea4de17d}`
+
+
+### Oppgave
+
+> 🌍 Informasjonsdeling
+> 
+> ---
+> 
+> NISSENS verksted har mottatt en mystisk melding og litt kode for å dekryptere
+> meldingen. Noen alver i førstelinjen har sett på det, og blir ikke helt kloke.
+> De mistenker at kun denne ene hemmeligheten ikke er nok. Kanskje er det andre
+> som sitter på mer info?
+> 
+> \- Mellomleder
+
+Vedlegg:
+
+* [filer.zip](./dag11/filer.zip)
+    - [dekrypter_melding.py](./dag11/dekrypter_melding.py)
+    - [melding.enc](./dag11/melding.enc)
+
+
+#### NISM
+
+Tidligere i desember valgte vi tilhørighet til en tjeneste, og siden jeg valgte
+NISM fikk jeg en spesiell melding fra de. De som valgte de andre fikk
+tilsvarende meldinger fra NPST og KRIAPOS. 
+
+> Mystifistisk pakke
+> 
+> ---
+> 
+> Heisann alle sammen!
+> 
+> Det kom et bud innom med en pakke som vi ikke klarer å finne ut av. Budet la
+> igjen en post-it lapp med
+> `02a5588f275984a2296d505067ec727ff3a27b860ebda01a82f408f7aa4cda96` på og
+> pakken er vedlagt i meldingen.
+> 
+> \- 📞 Sentralbordet
+
+Vedlegg:
+
+* [nism.zip](./dag11/nism/nism.zip)
+    - [hemmelighet_2.txt](./dag11/nism/hemmelighet_2.txt)
+
+
+#### Hemmeligheter
+
+Alle hemmelighetene fra hver tjeneste ble delt på Discord og finnes i
+[hemmeligheter.txt](./dag11/hemmeligheter.txt):
+
+```
+hex_str1 = "a3c5a5a81ebc62c6144a9dc1ae5cce11"
+hex_str2 = "980daad49738f76b80c8fafb0673ff1b"
+hex_str3 = "fc78e6fee2138b798e1e51ed15e0a109"
+```
+
+
+### Løsning
+
+Her var vi nødt til å samarbeide for å få alle hemmelighetene. Når man hadde
+alle hemmelighetene gjalt det å sette dem sammen på den rette måten. Litt
+prøving og feiling måtte til, men til slutt fant jeg ut at de skulle XORes
+sammen. XOR-resultatet er altså nøkkelen for å dekryptere flagget, og det var
+enkelt å fylle inn i det utleverte dekrypterings-scriptet. 
+
+[`solve.py`](./dag11/solve.py):
+```python
+from Crypto.Cipher import AES
+from base64 import b64decode
+import json
+
+from binascii import unhexlify
+
+
+# from hemmeligheter.txt
+hexstrs = ["a3c5a5a81ebc62c6144a9dc1ae5cce11",
+           "980daad49738f76b80c8fafb0673ff1b",
+           "fc78e6fee2138b798e1e51ed15e0a109"]
+
+key = 0
+for k in hexstrs:
+    key ^= int.from_bytes(unhexlify(k), "big")
+
+key = key.to_bytes((key.bit_length() + 7 ) // 8, "big")
+
+with open("melding.enc", "rb") as f:
+    data = json.loads(f.read())
+    nonce = b64decode(data["nonce"])
+    ciphertext = b64decode(data["ciphertext"])
+    tag = b64decode(data["tag"])
+    cipher = AES.new(key, AES.MODE_GCM, nonce = nonce)
+    plaintext = cipher.decrypt_and_verify(ciphertext, tag)
+    print("Dekryptert melding: " + plaintext.decode('utf-8'))
+```
+
+### Svar
+
+> Strålende samarbeid her! Flott dere får til å samarbeide på tvers sånn.
+> 
+> \- Mellomleder
