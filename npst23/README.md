@@ -606,3 +606,52 @@ noen på Discord fant vi ut at det var [Coffin
 Dance](https://www.youtube.com/watch?v=j9V78UbdzWI). Du kan høre den
 ~øreskjærende~ nydelige sangen i filen [`beep.wav`](./dag8/beep.wav). 
 
+
+
+## Dag 9
+
+### Flagg
+
+`KRIPOS{13:20}`
+
+
+### Oppgave
+
+> 🕖 Kronolokalisering
+> 
+> ---
+> 
+> Gjennom et beslag har vi fått tak i et papirark. På den ene siden står det
+> “Oppmøtested for den topphemmelige sydpolinfiltrasjonen 2023, rekognosering
+> 23. november”. På den andre siden av arket er det et bilde. For å kunne hente
+> inn overvåkingsbilder og identifisere hvem som har planlagt arrangementet
+> trenger vi det nøyaktige tidspunktet bildet er tatt.
+> 
+> Send meg svar på denne eposten som KRIPOS{tidspunkt}, f.eks. KRIPOS{23:35},
+> rundet av til nærmeste fem minutter.
+> 
+> \- Mellomleder
+
+Vedlegg:
+
+![bilde.jpeg](./dag9/bilde.jpeg)
+
+
+### Løsning
+
+Jeg kjente ikke igjen bygget på bildet så jeg brukte Google Reverse Image Search
+og fant at det var Europol sitt bygg i Haag. Det er ingen EXIF-metadata om når
+bildet ble tatt, så for å finne ut når bildet ble tatt må vi bruke solen. Det
+finnes flere ressurser online for å gjøre dette. Jeg brukte
+[suncalc.org](https://www.suncalc.org/) for å finne ut hvordan skyggen falt på
+ulike tidspunkt. Med mye prøving og feiling fant jeg
+[dette](https://www.suncalc.org/#/52.093,4.282,19/2023.11.23/13:20/30/1)
+tidspunktet hvor skyggen faller omtrent som på bildet. 
+
+
+### Svar
+
+> Strålende! Jeg setter igang Tastefinger for å finne skurken!
+> 
+> \- Mellomleder
+
