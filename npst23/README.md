@@ -230,3 +230,90 @@ print(dec.decode("latin-1"))
 > 
 > \- Mellomleder
 
+
+## Dag 4
+
+### Flagg
+
+`PST{ASCII_art_er_kult}`
+
+
+### Oppgave
+
+> Pinneved
+>
+> ---
+> 
+> Alvebetjentene på Jule NISSEN sitt verksted våknet i dag til et fryktelig syn;
+> Julenissens slede er sprengt i fillebiter. Vi har satt folk på saken for å
+> finne ut av hvem som er ansvarlig for ødeleggelsen, men det er kritisk at
+> sleden blir reparert slik at vi får testet den før Jule NISSEN skal levere
+> pakkene.
+> 
+> Alvebetjentene har samlet vrakrestene, samt verktøyet de mistenker at
+> sabotørene har brukt.
+> 
+> Vi trenger at du rekonstruerer sleden så fort som mulig!
+>
+> \- Tastefinger
+
+Vedlegg:
+
+* [pinneved.py](./dag4/pinneved.py)
+* [pinneved.txt](./dag4/pinneved.txt)
+
+
+### Løsning
+
+Dette er en reversing-oppgave hvor vi skal reversere `pinneved.py`-scriptet for
+å rekonstruere sleden. Kort fortalt tar `pinneved.py`-scriptet den sammensatte
+sleden og deler opp i 24 fragmenter med `explode()` funksjonen som lagres i
+`bang`. Hvert tegn i hvert fragment blir så gjort om til det tegnet som kommer 2
+etter som blir lagret i `eksplosjon`. Disse omgjorte fragmentene blir så satt
+sammen ved å bruke indeksene i `otp` arrayet. Solve-scriptet under gjor denne
+prosessen baklengs. 
+
+[`solve.py`](./dag4/solve.py):
+```python
+from pathlib import Path
+
+otp = [23, 2, 0, 5, 13, 16, 22, 7, 9, 4, 19, 21, 18, 10, 20, 11, 12, 14, 6, 1, 3, 8, 17, 15]
+pinneved = Path("./pinneved.txt").read_text()
+
+def explode(input, antall):
+    størrelse = len(input) // antall
+    fragmenter = []
+    
+    for i in range(0, len(input), størrelse):
+        fragment = input[i:i+størrelse]
+        fragmenter.append(fragment)
+    
+    return fragmenter
+
+pinneved = explode(pinneved, 24)
+pinneved_reversed = [""] * 24
+for n, i in enumerate(reversed(otp)):
+    pinneved_reversed[i] = pinneved[n]
+eksplosjon = [
+        ''.join([
+            chr(ord(c) - 2) for c in fragment
+        ]) 
+        for fragment in pinneved_reversed
+]
+bang = "".join(eksplosjon)
+
+Path("./slede.txt").write_text(bang)
+print("Wrote answer to file slede.txt")
+```
+
+Den sammensatte sleden kan sees i [`slede.txt`](./dag4/slede.txt).
+
+
+### Svar
+
+> Et faktisk kunstverk! Godt jobbet!
+> 
+> Vi setter i gang testingen sporenstreks.
+> 
+> \- Tastefinger
+
