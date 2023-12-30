@@ -1,0 +1,4 @@
+EGG{BEEPBOOP}
+
+beep1 function is morse code
+

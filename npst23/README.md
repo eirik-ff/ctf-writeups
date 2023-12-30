@@ -550,3 +550,42 @@ print(m)
 > 
 > \- Mellomleder
 
+
+## Dag 8
+
+### Flagg
+
+`NSM{65d77649dcd02ab0fed102c3e3d3d33faba1874038c7bda737c40604021034b4}`
+
+
+### Oppgave
+
+> Ransomware
+> 
+> ---
+> 
+> Skjermen på en av datamaskinene på NISSENS verksted ble plutselig dekket av
+> mange meldinger om at viktige filer var blitt kryptert. Et team av alver
+> klarte å finne igjen denne filen sammen med en høyst mistenkelig fil, men
+> klarer ikke å dekryptere filen. De har delt filene i et ZIP-arkiv med
+> `infected` som passord. Klarer du å få tilbake den viktige filen?
+> 
+> \- Tastefinger
+
+Vedlegg:
+
+* [mistenkelig_beslag.zip](./dag8/mistenkelig_beslag.zip)
+    - [wuauclt.exe](./dag8/wuauclt.exe)
+    - [flagg.kryptert](./dag8/flagg.kryptert)
+
+
+### Løsning
+
+
+
+### Svar
+
+> Kjempeflott! Nå skal vi klare å røske ut infeksjonen!
+> 
+> \- Tastefinger
+
