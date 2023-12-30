@@ -824,3 +824,83 @@ with open("melding.enc", "rb") as f:
 > Strålende samarbeid her! Flott dere får til å samarbeide på tvers sånn.
 > 
 > \- Mellomleder
+
+
+
+## Dag 12
+
+### Flagg
+
+`PST{I_cAn_HaZ_rEciprOCaTeD_tRuzT?}`
+
+
+### Oppgave
+
+> Pakkestorm
+> 
+> ---
+> 
+> Jeg har vært på et temmelig hemmelig oppdrag og fulgt med på en server som har
+> hatt mistenkelig oppførsel tidligere. Nå tok vi den igjen når den begynte å
+> sende masse pakker, men selv om jeg som alle andre alver liker pakker så ble
+> det litt for mye av det gode. Kan du finne de onde for meg?
+> 
+> \- Tastefinger
+
+Vedlegg:
+
+* [fangede_pakker.pcap](./dag12/fangede_pakker.pcap)
+
+
+### Løsning
+
+Her var det mye veldig mange pakker, og hvis man naivt prøver å sette sammen
+pakkene til flagg får man veldig mange mulige. Det er ingen åpenbar måte å finne
+ut hviket flagg som er det rette, og det er for mange å brute-force. Det er
+derimot et hint i oppgaveteksten. Vi skal finne de "onde" pakkene, og det er en
+aprilsnarr RFC som foreslår å bruke en reservert bit i IP-headeren som ["Evil
+bit"](https://en.wikipedia.org/wiki/Evil_bit). Dette er det vi er på jakt etter
+her, og med solve scriptet under får vi flagget. 
+
+
+[`solve.py`](./dag12/solve.py):
+```python
+import time
+from pathlib import Path
+from scapy.all import PcapReader, IP, Raw
+
+pcap_path = Path("./fangede_pakker.pcap")
+
+t0 = time.time()
+flag = ""
+with PcapReader(str(pcap_path)) as reader:
+    for i, packet in enumerate(reader):
+        if IP not in packet:
+            print(f"No IP in packet {i}")
+            packet.show()
+            continue
+
+        src = packet[IP].src
+        dst = packet[IP].dst
+
+        # https://en.wikipedia.org/wiki/Evil_bit
+        evil = packet[IP]
+        if "evil" in evil.flags:
+            raw = Raw(packet[IP].payload)
+            data = raw.load.decode()
+            c = chr(int(data, 2))
+            flag += c
+
+t1 = time.time()
+print(f"Timing: parse={t1 - t0:.2f}s")
+
+print("Flag:", flag)
+```
+
+### Svar
+
+> Flott at du fant ut av det her. Jeg har gått skikkelig lei av å sitte og
+> stirre på den serveren.
+> 
+> \- Tastefinger
+
