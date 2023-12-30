@@ -655,3 +655,64 @@ tidspunktet hvor skyggen faller omtrent som på bildet.
 > 
 > \- Mellomleder
 
+
+
+## Dag 10
+
+### Flagg
+
+`PST{julenisseStreng0Alv}`
+
+
+### Oppgave
+
+> Alvesortering
+> 
+> ---
+> 
+> De strenge alvene har skrevet ned et julekodeord, men i den ivrige sorteringen
+> av pakker har det skjedd en horribel feil og alt er blitt rot! Ordet har blitt
+> borte i det som ser ut som et virrvarr av tilfeldig tekst! Nå trenger de hjelp
+> til å gjenfinne ordet. De har null peiling på hvor langt ordet er. Kan du å
+> gjenfinne ordet?
+> 
+> \- Mellomleder
+
+Vedlegg:
+
+* [random_text.bin](./dag10/random_text.bin)
+
+
+### Løsning
+
+Det er ikke mye å bli klok av ved å se på linjene i den utdelte filen. Man må
+rett og slett bare prøve ulike måter å masere dataen på. Én slik måte er å
+sortere linjene basert på lengden, og dette viser seg å gi flagget.
+
+[`solve.py`](./dag10/solve.py):
+```python
+from pathlib import Path
+
+input_file = Path("./random_text.bin")
+
+data = input_file.read_bytes()
+data = [d for d in data.split(b"\x00") if len(d) > 0]
+data = sorted(data, key=lambda x: len(x))
+flag = ""
+for d in data:
+    f = chr(d[0])
+    flag += f
+    if f == "}":
+        break
+
+print(flag)
+```
+
+
+### Svar
+
+> Bra det ble orden på sakene!
+> 
+> \- Mellomleder
+
+
