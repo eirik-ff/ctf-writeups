@@ -904,3 +904,44 @@ print("Flag:", flag)
 > 
 > \- Tastefinger
 
+
+## Dag 13
+
+### Flagg
+
+`KRIPOS{Perth}`
+
+
+### Oppgave
+
+> GeoGjettr
+> 
+> ---
+> 
+> Ledelsen har fått dilla på GeoGjettr og jeg er med i en konkurranse, men
+> klarer ikke finne ut av hvilken by bildet her er fra. Kan du hjelpe meg litt
+> fort?
+> 
+> Svar meg med KRIPOS{navn på by}.
+> 
+> \- Mellomleder
+
+Vedlegg:
+
+![bilde.png](./dag13/bilde.png)
+
+
+### Løsning
+
+Scanner vi QR-koden får vi muligheten til å koble til et trådløst nett med navn
+"The state building". Et søk på Google gir kun ett resultat i Perth, Australia.
+Vi kan bekrefte at vi har den rette plassen ved å sammenlikne bilder fra
+innsiden av baren "Beer Corner". 
+
+
+### Svar
+
+> Haha! Nå leder jeg!
+> 
+> \- Mellomleder
+
