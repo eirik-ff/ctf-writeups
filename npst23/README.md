@@ -132,3 +132,101 @@ oss da flagget.
 > 
 > \- Mellomleder
 
+
+## Dag 3
+
+### Flagg
+
+`KRIPOS{Husk å se etter spor i snøen!}`
+
+
+### Oppgave
+
+> 📃Redacted
+> 
+> ---
+> 
+> Det er krise! Filene på alvemaskinene har blitt kryptert, og vi har ingen
+> backups tilgjengelig!
+> 
+> På nissens skrivebord fant vi det vedlagte brevet, sammen med en kryptert fil.
+> 
+> Det er ubeskrivelig viktig at vi får åpnet denne filen igjen umiddelbart, da
+> Jule NISSEN ikke klarer å huske innholdet!
+> 
+> \- Mellomleder
+
+Vedlegg:
+
+* [Mitt utpressingsbrev.docx](<./dag3/Mitt utpressingsbrev.docx>)
+* [huskeliste.txt.enc](./dag3/huskeliste.txt.enc)
+
+### Løsning
+
+Vi får utdelt et Word-dokument med en ransom-note:
+
+![Ransom note original](./dag3/figures/ransom-note-original.png)
+
+Det er tilsynelatende "REDACTED", men dette er kun en svart boks vi lett kan
+flytte. Det samme gjelder bildet midt på siden som viser krypto-metoden. Etter å
+fikse disse figurene ser dokumentet slik ut:
+
+![Ransom note solved](./dag3/figures/ransom-note-solved.png)
+
+Vi har dermed fått nøkkelen og krypteringsmetoden. Det modifiserte
+Word-dokumentet får du [her](<./dag3/Mitt utpressingsbrev løst.docx>). 
+
+For å dekryptere huskelisten lager vi et script som leser inn ciphertexten,
+kjører ROT13 på IVen og dekrypterer med AES-CTR:
+
+[`solve.py`](./dag3/solve.py):
+```python
+from pathlib import Path
+from binascii import unhexlify
+from Crypto.Cipher import AES
+from Crypto.Util import Counter
+
+def rot13(text):
+    result = []
+    for char in text:
+        if "a" <= char <= "z":
+            result.append(chr((ord(char) - ord("a") + 13) % 26 + ord("a")))
+        elif "A" <= char <= "Z":
+            result.append(chr((ord(char) - ord("A") + 13) % 26 + ord("A")))
+        else:
+            result.append(char)
+    return "".join(result)
+
+
+# 24 bytes = 192 bit key
+key = unhexlify("dda2846b010a6185b5e76aca4144069f88dc7a6ba49bf128")
+
+# IV is ROT13 encoded before use
+iv = "UtgangsVektor123"
+iv_rot13 = rot13(iv)
+
+iv = iv_rot13.encode()
+
+enc = Path("./huskeliste.txt.enc").read_bytes()
+
+cipher = AES.new(
+    key,
+    AES.MODE_CTR,
+    counter=Counter.new(128, initial_value=int.from_bytes(iv, byteorder="big"))
+)
+
+dec = cipher.decrypt(enc)
+
+print(dec.decode("latin-1"))
+```
+
+
+### Svar
+
+> Flott!
+> 
+> Jeg kaller inn til et møte med Jule NISSEN og de andre påvirkede så vi kan få
+> delt ut informasjonen igjen.
+> 
+> \- Mellomleder
+
