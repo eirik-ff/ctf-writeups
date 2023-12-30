@@ -317,3 +317,83 @@ Den sammensatte sleden kan sees i [`slede.txt`](./dag4/slede.txt).
 > 
 > \- Tastefinger
 
+
+## Dag 5
+
+### Flagg
+
+`PST{FROGN BIBLIOTEK}`
+
+
+### Oppgave
+
+> Muldvarpjakt
+> 
+> ---
+> 
+> Gjennom temmelig hemmelige innhentingsmetoder har vi fanget opp en melding om
+> et nært forestående møte på Fastlands-Norge mellom en mistenkt kildefører som
+> jobber for sydpolare tjenester og et ukjent objekt vi mistenker kan være en
+> muldvarp.
+> 
+> For at våre spaningsalver skal settes i stand til å observere møtet og
+> identifisere det ukjente objektet må vi vite hvor vi skal sende våre alver.
+> 
+> Vi prøvde å spørre OSINT-alvene våre, men de var travelt opptatt med å
+> saumfare sosiale medier etter snille og slemme barn. De mumlet noe om at vi
+> kunne fikse det selv med “turbo overgang”.
+> 
+> Kan du ut fra meldingen finne ut hvor de skal møtes?
+> 
+> > Ta bussen og gå av på holdeplassen rett ved begravelsesbyrået som ligger
+> > inntil en sjømatbutikk. Jeg vil stå klar ved fontenen noen titalls meter fra
+> > bussholdeplassen. Når du har kommet frem til fontenen, vil vi sammen gå til
+> > det nærliggende biblioteket som ligger under 50 meter fra fontenen og
+> > gjennomfører overføringen.
+> 
+> Svar meg med navnet på møtestedet og på formen PST{BERGEN LUFTHAVN}
+> 
+> \- Tastefinger
+
+
+### Løsning
+
+Dette er en OSINT-oppgave hvor vi skal lokalisere et sted basert på en
+beskrivelse. Det er gitt et hint om at vi kan bruke "turbo overgang", altså
+tjenesten [Overpass Turbo](https://overpass-turbo.eu/).
+
+Vi ser nærmere på plassbeskrivelsen. Uthevelsene er mine:
+
+> Ta bussen og gå av på **holdeplassen rett ved begravelsesbyrået** som ligger
+> **inntil en sjømatbutikk**. Jeg vil stå klar ved **fontenen noen titalls meter
+> fra bussholdeplassen**. Når du har kommet frem til fontenen, vil vi sammen gå
+> til det **nærliggende biblioteket som ligger under 50 meter fra fontenen** og
+> gjennomfører overføringen.
+
+Basert på dette kan vi formulere den følgende Overpass Turbo queryen:
+
+```
+area[name="Norge"]->.no;                      
+node(area.no)[shop="seafood"];                
+node(around:10.0)[shop="funeral_directors"];  
+node(around:100.0)[amenity="fountain"];       
+node(around:50.0)[amenity="library"];         
+                                              
+out;                                          
+```
+
+![overpass turbo result](./dag5/overpass-turbo-result.png)
+
+Her har jeg ikke tatt med bussholdeplassen da jeg ikke visste hvordan, men det
+viste seg å ikke være nødvendig. Den første linjen begrenser oss til
+fastlands-Norge som spesifisert i oppgaven. De andre bruker filtre for å få
+resultater som ligger nær de andre stedene. Dette gir kun ett resultat i Drøbak,
+og vi finner dermed "Frogn bibliotek". 
+
+
+### Svar
+
+> Ypperlig! Nå har vi dem! :)
+> 
+> \- Tastefinger
+
