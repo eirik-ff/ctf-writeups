@@ -589,3 +589,20 @@ Vedlegg:
 > 
 > \- Tastefinger
 
+
+### Egg
+
+`EGG{BEEPBOOP}`
+
+I dekompileringen finner vi en funksjon med mange `Beep()` og `Sleep()`
+funksjoner. Den første, døpt `beep1`, ser mistenksomt ut som morse-kode. Dette
+løser jeg for hånd og får egget over. 
+
+Det er to andre funksjoner som også har mange `Beep()` og `Sleep()` funksjoner.
+Disse er ikke morse, men spiller en sang. I scriptet
+[`beep_analysis.py`](./dag8/beep_analysis.py) har jeg skrevet kode for å spille
+av denne sangen. Jeg klarte ikkke å høre hvilken sang det var, men med hjelp fra
+noen på Discord fant vi ut at det var [Coffin
+Dance](https://www.youtube.com/watch?v=j9V78UbdzWI). Du kan høre den
+~øreskjærende~ nydelige sangen i filen [`beep.wav`](./dag8/beep.wav). 
+
