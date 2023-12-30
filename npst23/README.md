@@ -489,3 +489,64 @@ Merk at ZWJ har en annen byte-representasjon enn Unicode code point.
 > 
 > \- Tastefinger
 
+
+## Dag 7
+
+### Flagg
+
+`NSM{af0dbd13cee45990593c182b213f978d}`
+
+
+### Oppgave
+
+> Alle gode ting er tre
+> 
+> ---
+> 
+> Alveresepsjonen fant en mystisk lapp i postboksen til Nissens verksted i dag
+> tidlig. Vanligvis er dette noe Ronny, Shahana og Ada fra alvdeling for
+> kryptografi ville tatt seg av. Dessverre er alle tre bortreist på en viktig
+> konferanse i San Francisco for å høre om den siste utviklingen innen
+> eksponenter og modulær aritmetikk. Kan du steppe inn for dem og finne ut av
+> hva denne beskjeden egentlig er for noe?
+> 
+> \- Mellomleder
+
+Vedlegg:
+
+* [msg.txt](./dag7/msg.txt)
+
+
+### Løsning
+
+Den vedlagte meldingen inneholder tre tall som minner veldig om RSA. Denne
+mistanken blir også bekreftet av navnene "Ronny, Shahana og Ada" fra
+oppgaveteksten. 
+
+Sårbarheten er her at vi bruker RSA-algoritmen direkte for å kryptere en
+plaintext og en liten eksponent `e`. Der er derfor så enkelt som å ta den
+modulære kube-roten av ciphertexten (mod N) for å få plaintexten. Se script
+under.
+
+[`solve.py`](./dag7/solve.py):
+```python
+from gmpy2 import iroot
+
+N = 0x5993c05eac819aa17ae7e4e4b9f75b2d6fdbaec913e0b2d6f4ba585a991b62279ed9ac53aeadee3327321e02c0c06ecda184952df5d1cc8b3024643c0afdd9bbd52bf2d830f54d6e59e76844394eb0ffc498995dd270b9b95bf1614984472a3ef12d8c1bad64529be7b638c5d0fccf61c5ac2ab4564e5215748eb2533d4d949afd9486426dbf0c06a07c2c0f6d482e4f8cf3052e6ab9df20878b747936d590c3b8bb0219a378cbec03baee4ea8d0641c57bcc18706bbe92c3f2d7569c424062d9b79464958419b4000e3e31c077bba27ef2fc6ed15b7ebdcdb41d1cbf7708737e200904015d341ef94c537a916f1fec61e0b1bf64762e5a97bafdde290b939c3
+e = 3
+C = 0x755040806d1d699c76cf2b3fffc28ad8831a8667e1b064297a43733b89f6272483a5a728b725d02b069f8fc65eb51d89ce9133df8f5f2d5e13f63c5423021eb2b56eeb91b11d78717528dfce169450a08d40f5ab451c8ac1f8c6875cffbd4d70259d436ed70baeae37b9bdafc5965
+
+M, success = iroot(C, e)
+M = int(M)
+m = M.to_bytes((M.bit_length() + 7) // 8, "big").decode()
+print(m)
+```
+
+
+### Svar
+
+> Jeg tror jeg trenger hele alvdelingen for kryptografi for å forstå meg på
+> denne her, men bra du fikk det til!
+> 
+> \- Mellomleder
+
