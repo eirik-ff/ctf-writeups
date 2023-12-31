@@ -1055,7 +1055,7 @@ linje, ord, bokstav`. Går vi gjennom boken får vi følgende:
 50	6	5	11 = T
 ```
 
-På wn linje blir det: `PST KRØLLPARENTLS BOKSTAV JAKT K RØD LAAREVTES SLUTT`
+På en linje blir det: `PST KRØLLPARENTLS BOKSTAV JAKT K RØD LAAREVTES SLUTT`
 
 Bokstavene er manuelt hentet ut fra boken, og til tross for dobbeltsjekking har
 det helt sikkert oppstått feil fordi bokstavene gir ikke helt mening. Vi
@@ -1067,4 +1067,102 @@ kan uansett forstå meningen, og får flagget.
 > Da er det bare å legge snoken i jern da!
 > 
 > \- Tastefinger
+
+
+
+## Dag 15
+
+### Flagg
+
+`PST{e32ba07d1254bafd1683b109c0fd6d6c}`
+
+
+### Oppgave
+
+> Bit-råte
+> 
+> ---
+> 
+> Brukerveiledningen til en av de eldste maskinene på verkstedet har blitt
+> borte. Heldigvis har Julenissens arkiv 1000 sikkerhetskopier av dokumentet på
+> magnetbånd. Det viser seg at alle kopiene er kraftig angrepet av bit-råte så
+> dokumentet må gjenoppbygges. Ifølge arkivalven så er brukerveiledningen
+> skrevet på gammel-nordpolarsk som har samme alfabet som norsk, men inneholder
+> ikke nye tegn som disse: {}#$[]§¤@
+> 
+> Når du finer ut av det så send meg MD5-sjekksummen til det gjenoppbyggede
+> dokumentet på formen PST{checksum}. Svaret er ikke versalfølsomt.
+> 
+> \- Mellomleder
+
+Vedlegg:
+
+* [backups.zip](./dag15/backups.zip)
+    - [manual.bak.NNN](./dag15/backups/), hvor `NNN = {000..999}`
+
+
+### Løsning
+
+Bit-råte tyder på at enkelt bits i dataen har flippet og gjort dataen uleselig,
+og at bitsene har flippet forskjellig i hver backup. Det er derimot usannsynlig
+at samme bit flipper i alle backup-filene, og at majoriteten av filene
+inneholder rett tegn på rett plass. Derfor kan vi konstruere manualen ved å gå
+gjennom alle backup-filene og for hver plass (index) "stemme" på hvilket tegn
+som forekommer mest, og bruke det hyppigste tegnet som det rette. Vi må også
+fjerne de tegnene som ikke er med. Solve scriptet under gjør akkurat dette. Den
+rekonstruerte manualen kan leses i [`manual`](./dag15/manual). 
+
+
+[`solve.py`](./dag15/solve.py):
+```python
+from pathlib import Path
+from hashlib import md5
+
+class Vote:
+    def __init__(self):
+        self.votes = {}
+
+    def vote(self, char: str):
+        self.votes[char] = self.votes.get(char, 0) + 1
+
+    def result(self):
+        return sorted(self.votes.items(), key=lambda x: x[1], reverse=True)[0][0]
+
+
+base_path = Path("./backups")
+disallowed = "{}#$[]§¤@"
+
+byte_count = 3271
+file_count = 1000
+votes = []
+for _ in range(byte_count):
+    votes.append(Vote())
+    
+for i in range(file_count):
+    file_name = f"manual.bak.{i:03d}"
+    file_path = base_path / file_name
+    data = file_path.read_text(encoding="latin-1")
+    for j, c in enumerate(data):
+        if c not in disallowed:
+            votes[j].vote(c)
+
+text = ""
+for vote in votes:
+    r = vote.result()
+    text += r
+
+output_path = Path("./manual")
+written = output_path.write_text(text, encoding="latin-1")
+print("Wrote", written, "bytes to", output_path)
+
+flag = "PST{" + md5(text.encode("latin-1")).hexdigest() + "}"
+print(flag)
+```
+
+### Svar
+
+> Og jeg som trodde magnetbånd var noe en brukte for å henge opp bilder på
+> kjøleskapet...
+> 
+> \- Mellomleder
 
