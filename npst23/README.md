@@ -1550,3 +1550,44 @@ print(flag)
 > 
 > \- Mellomleder
 
+
+
+## Dag 20
+
+### Flagg
+
+(Ikke løst)
+
+
+### Oppgave
+
+> Rudolfs Eventyr
+> 
+> ---
+> 
+> Julefreden har begynt å senke seg over Nordpolen, og alvene har blitt hekta på
+> på et retro spill. I følge noen av alvene er det visstnok mye hemmeligheter
+> her!
+> 
+> Et lite avbrekk i julestria må da være lov?
+> 
+> \- Tastefinger
+
+Vedlegg:
+
+* [rudolfs\_eventyr.gba](./dag20/rudolfs_eventyr.gba)
+
+
+### Løsning
+
+Vi får utlevert en `.gba` fil som er en GameBoy Advance ROM image. Vi kan starte
+det i en emulator og får et spill der vi er Rudolf som kan gå rundt i en verden
+for å finne deler av flagget. 
+
+TODO: skriv notater så langt
+
+
+### Svar
+
+(Ikke løst)
+
