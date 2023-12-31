@@ -581,6 +581,7 @@ Vedlegg:
 
 ### Løsning
 
+TODO
 
 
 ### Svar
@@ -1424,6 +1425,128 @@ for turns in scytale_decrypt_bruteforce(ciphertext, "pst{"):
 ### Svar
 
 > For et funn! Dette hører jo hjemme i et museum!
+> 
+> \- Mellomleder
+
+
+
+## Dag 19
+
+### Flagg
+
+`PST{TheGrinchWouldHateThis}`
+
+
+### Oppgave
+
+> Hide and Seek
+> 
+> ---
+> 
+> Som følge av et stadig økende trusselbilde, spesielt ifra sydligere strøk, har
+> Nordpolar sikkerhetstjeneste etablert en intern enhet som skal beskytte
+> tjenestens egne digitale systemer mot angrep. Enheten består av nøye
+> selekterte tidligere alveteknologer som har god erfaring med bekjempelse av
+> sydpolare aktører.
+> 
+> Grunnet tidligere prestasjoner på Nordpolen har NISSEN selv navngitt enheten
+> til Julens Utvalgte Lærde Elektronisk databehandlende Sikkerhets og Operative
+> Center, forkortet JULESOC. JULESOCen kan blant annet bidra til å finne
+> ondsinnede fugler i datasystemene til Julenissens verksted, grave i sildcoin
+> transaksjoner og analyse av speilglatte kopier.
+> 
+> JULESOC har nylig mottatt en speilkopi av en arbeidsstasjon lokalisert på
+> Julenissens verksted. Det er mistanke om at noen uautoriserte har vært inne på
+> maskinen og tukla. Vi trenger at du graver frem noen spor.
+> 
+> \- Mellomleder
+
+Vedlegg:
+
+* [image.raw.gz](./dag19/image.raw.gz)
+
+
+### Løsning
+
+Vi får utlevert et image av en disk, og `file` rapporterer det som `image.raw:
+DOS/MBR boot sector` med 3 partisjoner. Vi kan kjøre `fdisk -l ./image.raw` for
+å få start og slutt blokkene for hver partisjon. 
+
+```
+Disk ./image.raw: 1 GiB, 1073741824 bytes, 2097152 sectors
+Units: sectors of 1 * 512 = 512 bytes
+Sector size (logical/physical): 512 bytes / 512 bytes
+I/O size (minimum/optimal): 512 bytes / 512 bytes
+Disklabel type: dos
+Disk identifier: 0x9e0c43d5
+
+Device       Boot   Start     End Sectors  Size Id Type
+./image.raw1         2048  411647  409600  200M 83 Linux
+./image.raw2       411648 1230847  819200  400M 83 Linux
+./image.raw3      1230848 1640447  409600  200M 83 Linux
+```
+
+Vi kan deretter mounte hver partisjon en etter en og hente ut filene. Dette kan
+vi gjøre i Linux med `mount -o loop,offset=[start*512] ./image.raw
+./mount-point/`. F.eks. for første partisjon, `mount -o loop,offset=1048576
+./image.raw ./partition1`. Grunnen til at vi må gange med 512 er at `start` er
+oppgitt i antall bokker, så vi ganger med block size (512 B) for å få
+offset/start i bytes. 
+[<sup>kilde</sup>](https://www.linuxquestions.org/questions/linux-general-1/how-to-mount-img-file-882386/#post4365399)
+
+Med alle partisjonene mounted har vi dette filsystemet:
+
+```
+image/
+├── part1/
+│   ├── Documents/
+│   ├── lost+found/
+│   └── Pictures/
+│       └── qr-code.png
+├── part2/
+│   ├── backup1/
+│   ├── gammelt/
+│   ├── lost+found/
+│   ├── nissetekst
+│   └── programmer/
+│       └── nissekodegenerator.py
+└── part3/
+    ├── hemmelig/
+    │   └── code
+    └── lost+found/
+```
+
+QR-koden er villspor, så de interessante filene er
+[`nissetekst`](./dag19/part2/nissetekst), som er en fil med mange tilfeldige
+julerelaterte ord, 
+[`nissekodegenerator.py`](./dag19/part2/programmer/nissekodegenerator.py), som
+er et program som lager en kode, og [`code`](./dag19/part3/hemmelig/code), som
+er en serie med tall. Outputten fra programmet ser lik ut som den vi finner i
+`code`, så da må vi dekode den. 
+
+Programmet går gjennom en fil og finner (byte-)indeksen til hvert unike tegn.
+Koden den gir ut tar hvert tegn i kodeordet og velger ut en tilfeldig indeks fra
+input-filen. For å dekode `code` må vi derfor bruke hvert tall i koden som
+indeks i `nissetekst`. Solve scriptet under gjør dette, og gir flagget. 
+
+
+[`solve.py`](./dag19/solve.py):
+```python
+nissetekst = open("part2/nissetekst").read()
+code = eval(open("part3/hemmelig/code").read())
+
+flag = ""
+for c in code:
+    flag += nissetekst[c]
+
+print(flag)
+```
+
+
+### Svar
+
+> Det er alltid noen som skal snike seg inn og ødelegge jula. Heldigvis har vi
+> deg til å stoppe disse grinchene!
 > 
 > \- Mellomleder
 
