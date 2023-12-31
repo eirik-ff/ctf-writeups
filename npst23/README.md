@@ -1241,3 +1241,72 @@ kodene etter de har merget. Da får vi flagget i kontaktmanualen.
 Hooken [`pre-commit`](./dag16/aksjon_2023/dot-git/hooks/pre-commit) hinter til
 at det finnes et egg i git-repoet. Jeg har derimot ikke klart å finne det. 
 
+
+
+## Dag 17
+
+### Flagg
+
+`pst{nede for telling}`
+
+
+### Oppgave
+
+> Innebygde ord
+> 
+> ---
+> 
+> Vi har snappet opp to meldinger som ble sendt til hovedobjektet i J-SAK EMBED.
+> Vi mistenker at meldingene ikke er hva det ser ut til å være.
+> 
+> Den første meldingen som ble sendt var en merkelig tekst om å telle, mens
+> melding nummer to bare ser ut til å være en rekke med tall. Vi tror det er en
+> betydning i disse tallene, kan du se på det og gi oss tilbakemelding hvis du
+> finner noe meningsfylt?
+> 
+> \- Tastefinger
+
+Vedlegg:
+
+* [melding\_1.txt](./dag17/melding_1.txt)
+* [melding\_2.txt](./dag17/melding_2.txt)
+
+
+### Løsning
+
+Her får vi to meldinger, den første er en slags gåte og den andre er mange tall.
+Jeg hadde mange feil teorier før jeg klarte denne, som at det var ulike former
+for klassiske ciphere (Caesar, Vigenere, Autokey, etc.), men ingen så ut til å
+lede noen vei. 
+
+Til slutt viste det seg at man skulle bruke den først meldingen
+som alfabet ved å lage en liste over unike tegn, men bevare rekkefølgen de
+kommer i i meldingen. Da gjenstår det bare å bruke tallene som indeks i de unike
+tegnene for å få flagget.
+
+[`solve.py`](./dag17/solve.py):
+```python
+melding1 = open("melding_1.txt").read()
+numbers = [int(n) for n in open("melding_2.txt").read().split(", ")]
+
+unique = ""
+for c in melding1:
+    if c not in unique:
+        unique += c
+
+flag = ""
+for n in numbers:
+    flag += unique[n]
+
+print(flag)
+```
+
+
+### Svar
+
+> Naturligvis! Nå tror jeg vi har en vektor for å få løst denne saken.
+> 
+> \- Tastefinger
+
+
+
