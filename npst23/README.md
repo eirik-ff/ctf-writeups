@@ -1591,3 +1591,49 @@ TODO: skriv notater så langt
 
 (Ikke løst)
 
+
+
+## Dag 21
+
+### Flagg
+
+(Ikke løst)
+
+
+### Oppgave
+
+> Rudolf "The Stag"'s Pepperkaker
+> 
+> ---
+> 
+> Nasjonens sikkerhetsalver leter febrilsk etter sin temmelig hemmelige
+> pepperkakeoppskrift, men det peker til at Rudolf "The Stag" kanskje har spist
+> opp denne. Klarer du skanne "The Stag"'s kropp og lese av denne før den går
+> sin naturlige gang og blir borte for alltid?
+> 
+> \- Mellomleder
+
+Vedlegg:
+
+* [rudolph.7z](./dag21/rudolph.7z)
+    - [rudolph.png](./dag21/rudolph.png)
+
+![rudolph.png](./dag21/rudolph.png)
+
+
+### Løsning
+
+Ingen har klart å løse denne oppgaven. Det er åpenbart en stego-oppgave, men det
+er uklart hvilket verktøy man skal bruke. Jeg gjorde basic analyse med
+[Aperi'Solve](https://www.aperisolve.com/6132b419d217ffdb177e08681e9a5bda) uten
+å finne noe. Jeg prøve også et par stego-verktøy jeg fant på Google med navn som
+høres ut som "The Stag", men uten hell her også. 
+
+Stego er veldig guessy og avhengig av at man har rett verktøy. Jeg gadd ikke
+bruke mer tid på dette, og ga meg tidlig. 
+
+
+### Svar
+
+(Ikke lsøt)
+
