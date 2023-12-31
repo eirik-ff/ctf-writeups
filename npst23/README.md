@@ -1637,3 +1637,125 @@ bruke mer tid på dette, og ga meg tidlig.
 
 (Ikke lsøt)
 
+
+
+## Dag 22
+
+### Flagg
+
+`PST{9da1b2a6-5a52-41ec-8bf0-32381e054db7}`
+
+
+### Oppgave
+
+> Gaveliste-endring
+> 
+> ---
+> 
+> Hei eirikff,
+> 
+> JULESOC har fått en alarm fra informasjonssystemet tilknyttet NISSENS
+> gavelager på VALøya i Tromsø. Alarmen handlet om en uautorisert modifikasjon i
+> databasen som styrer inventaret til lageret, og JULESOC har sendt oss
+> databasefilene slik de forekom på tidspunktet alarmen gikk.
+> 
+> Har du mulighet til å sjekke ut filene og finne ut hvilken rad som er blitt
+> modifisert?
+> 
+> Returner UUID til den modifiserte raden, f.eks.
+> PST{6eab374e-735f-416e-bcc6-81b4b8dfc7a9}
+
+Vedlegg:
+
+* [ALARM\_JULESOC.zip](./dag22/ALARM_JULESOC.zip)
+    - [inventory.db](./dag22/inventory.db)
+    - [inventory.db-shm](./dag22/inventory.db-shm)
+    - [inventory.db-wal](./dag22/inventory.db-wal)
+
+
+### Løsning
+
+Vi får utlevert en SQLite databasefil sammen med en `.db-shm` fil, der "shm"
+står for shared memory, og en `.db-wal` fil, der WAL står for Write-Ahead Log.
+Den første er ikke så interessant da den kun er der for å gjøre oppslag raskere,
+men WAL-filen er interessant. Den er et slags mellomlager for endringer som skal
+skrives til databasen. Endringer blir skrevet til WAL-filen først og så overført
+til databasen på et checkpoint. Se [denne
+artikkelen](https://sqliteforensictoolkit.com/forensic-examination-of-sqlite-write-ahead-log-wal-files/) 
+for en gjennomgang av filformatet. Det betyr at det kan være endringer i
+WAL-filen som ikke er endret i databasen. Det kan derimot være flere endringer
+for samme database-rad i WAL-filen, og når vi åpner database-filen i et
+databaseprogram (f.eks. DB Browser) gjøres et checkpoint og WAL-filen kan bli 
+resatt. 
+
+Jeg brukte mye tid på å prøve å forstå hvordan jeg kan se innholdet i WAL-filen
+uten å endre databasen, men fant ingen verktøy som gjorde dette for meg. Til
+slutt endte jeg med å grave gjennom binærdataen til WAL-filen for å forsøke å
+hente ut dataen. Jeg så at hvis man åpner `.db` og `.db-wal` i en hexviewer ser 
+man radene i ASCII-viewet på siden. 
+
+```
+000000c0  c8 62 04 55 4f 03 31 33  30 32 62 33 33 35 2d 66  |.b.UO.1302b335-f|
+000000d0  64 61 63 2d 34 32 64 65  2d 62 61 38 31 2d 33 34  |dac-42de-ba81-34|
+000000e0  37 35 65 65 61 38 65 65  63 65 4e 61 6e 6f 20 4a  |75eea8eeceNano J|
+000000f0  61 64 65 20 53 74 61 72  20 57 61 72 73 20 41 63  |ade Star Wars Ac|
+00000100  74 69 6f 6e 20 46 69 67  75 72 65 01 50 43 40 82  |tion Figure.PC@.|
+00000110  c8 61 04 55 37 03 38 34  33 62 36 30 63 34 2d 33  |.a.U7.843b60c4-3|
+00000120  61 32 33 2d 34 37 37 35  2d 39 33 30 34 2d 39 39  |a23-4775-9304-99|
+00000130  62 66 36 39 38 37 65 65  39 39 4e 61 6e 6f 20 4a  |bf6987ee99Nano J|
+00000140  61 64 65 20 42 65 61 6e  69 65 20 42 61 62 79 00  |ade Beanie Baby.|
+00000150  a9 bb 3f 82 c8 60 04 55  37 02 33 65 38 66 39 34  |..?..`.U7.3e8f94|
+00000160  30 37 2d 39 34 65 32 2d  34 39 36 61 2d 39 34 31  |07-94e2-496a-941|
+00000170  32 2d 35 64 64 63 35 31  66 36 35 39 34 35 4e 61  |2-5ddc51f65945Na|
+00000180  6e 6f 20 4a 61 64 65 20  54 6f 6e 6b 61 20 54 72  |no Jade Tonka Tr|
+00000190  75 63 6b 63 e0 4b 82 c8  5f 04 55 4f 02 36 33 31  |uckc.K.._.UO.631|
+000001a0  37 31 66 38 30 2d 39 66  63 39 2d 34 66 36 37 2d  |71f80-9fc9-4f67-|
+000001b0  38 32 65 30 2d 37 35 36  65 32 39 35 65 65 33 35  |82e0-756e295ee35|
+000001c0  65 4e 61 6e 6f 20 4a 61  64 65 20 53 6e 6f 6f 70  |eNano Jade Snoop|
+000001d0  79 20 53 6e 6f 2d 43 6f  6e 65 20 4d 61 63 68 69  |y Sno-Cone Machi|
+000001e0  6e 65 09 78 4b 82 c8 5e  04 55 4d 03 62 62 30 65  |ne.xK..^.UM.bb0e|
+```
+
+Deretter brukte jeg mye tid på å prøve å forstå hvilke byte som beskrev de ulike
+kolonnene i databasen. Noen er åpenbare, mens andre er mindre åpenbare. Jeg kom
+frem til følgende struktur:
+
+| Bytes   | Beskrivelse |
+| ------: | :---------- |
+| `04 55` | Separator |
+| `??`    | Kan være lengden til chunken, men er ikke alltid rett lengde |
+| `0?`    | Størrelsen på en int, se under |
+| uuid    | UUID som ASCII-tegn |
+| name    | Navnet til leken som ASCII-tegn |
+| int     | Bytene til antallet av leken som int |
+| `??`    | Noen bytes jeg ikke vet hva er. Kanskje en checksum. Vanligvis 4 bytes, men ikke alltid |
+
+Størrelsen på en `INTEGER` i SQLite kan fra 0, 1, 2, 3, 4, 6 eller 8 bytes
+avhengig av størrelsen på tallet som skal lagres.
+[<sup>kilde</sup>](https://www.sqlite.org/datatype3.html) 
+
+Scriptet [`get_wal_rows.py`](./dag22/get_wal_rows.py) under går gjennom
+WAL-filen og printer ut hver rad den finner. Vi ser at alle radene utenom én har
+int-størrelse på 2 eller 3 bytes, men én rad har størrelse 8 bytes. Dette er
+mistenksomt, så jeg sender inn den UUIDen som flagg og det stemmer. 
+
+```python
+wal = open("inventory.db-wal", "rb").read()
+
+for chunk in wal.split(b"\x04\x55")[1:]:
+    block_size = chunk[0]
+    int_size = chunk[1]
+    uuid = chunk[2:38].decode()
+    name = chunk[38:-4 - int_size].decode()
+    quantity_bytes = chunk[-4 - int_size:-4]
+
+    print("int size", int_size, uuid, name, int.from_bytes(quantity_bytes, "big"))
+```
+
+
+### Svar
+
+> Hm, det er noen som ikke liker Mindflex her, altså.
+> 
+> Takk for hjelpen!
+
