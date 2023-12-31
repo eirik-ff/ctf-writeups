@@ -1310,3 +1310,120 @@ print(flag)
 
 
 
+## Dag 18
+
+### Flagg
+
+`pst{var_julenissen_kong_leonidas}`
+
+
+### Oppgave
+
+> Melding fra antikken
+> 
+> ---
+> 
+> I riktig gamle dager hadde NISSEN flere regionskontor spredt rundt i verden.
+> Disse kontorene fungerte både som mottak for ønskelister og
+> distribusjonssenter for gaver. Da som nå var det ikke alle som oppførte seg
+> like pent fram mot jul, og ifølge historiebøkene var spesielt organisasjonen
+> PERSIUS (ledet av den onde Dr. Xerxes) stadig vekk på spion- og toktforsøk mot
+> ett av NISSENs regionkontor. På sitt verste var det angivelig hele 300
+> alvebetjenter i sving for å forsvare gaver og ønskelister. De særs tapre
+> alvene til tross, NISSEN var reelt bekymret for at viktig informasjon og gaver
+> skulle havne på avveie. Siden den gang har derfor all julesensitiv informasjon
+> blitt kryptert.
+> 
+> Takket være noen alvorlige logistikkproblemer (og muligens en streik eller to)
+> har plutselig en slik gammel melding dukket opp. Julelovens paragraf
+> §133-syvende ledd er imidlertid krystallklar
+> 
+> > Enhver julesensitiv informasjon må analyseres og vurderes før den avgraderes
+> > høytid.
+> 
+> Imidlertid er det ingen av Alvene som aner hvordan denne gamle meldingen skal
+> leses. Kan du hjelpe dem?
+> 
+> \- Mellomleder
+
+Vedlegg:
+
+* [melding.txt](./dag18/melding.txt)
+
+
+### Løsning
+
+Vi får utlevert en lang tekstfil med ciphertext vi skal dekryptere. Umiddelbart
+høres det ut som det kan være snakk om Caesar cipher, men Julius Caesar levde
+ikke i antikken, så det må være noe eldre.
+[Persius](https://en.wikipedia.org/wiki/Persius) og
+[Xerxes](https://en.wikipedia.org/wiki/Xerxes_I) nevnes med navn, og begge disse
+mennene levde i antikken i området rundt dagens Hellas. Videre nevnes det 300
+alver, og er nok et hint til filmen "300" som handler om Spartanerne. Hvis man
+f.eks. googler "spartans cipher" får man treff på
+["Scytale"](https://en.wikipedia.org/wiki/Scytale), og det er denne metoden som
+skal brukes i denne oppgaven. 
+
+Spørsmålet er nå hvilke innstillinger vi skal bruke. Vi kan nokså enkelt kjøre
+et brute-force angrep på ciphertexten og lete etter "pst{" som tegn på at vi har
+de rette innstillingene. Solve scriptet under gjør dette, og finner at 33
+omdreininger med 128 bokstaver per omdreining var rett innstilling.
+
+[`solve.py`](./dag18/solve.py):
+```python
+def scytale_decrypt(ciphertext: str, turns: int) -> str:
+    assert len(ciphertext) % turns == 0, \
+        f"Turns ({turns}) must divide ciphertext length ({len(ciphertext)})"
+
+    letters_per_turn = len(ciphertext) // turns
+    plaintext = ""
+    for t in range(letters_per_turn):
+        row = ciphertext[t::letters_per_turn]
+        plaintext += row
+
+    return plaintext
+
+
+def divisors(n: int) -> list[int]:
+    div = []
+    for d in range(1, n // 2 + 1):
+        if n % d == 0:
+            div.append(d)
+
+    div.append(n)
+    return div
+
+
+def scytale_decrypt_bruteforce(ciphertext: str, 
+                               known_plaintext: str, 
+                               ignore_case: bool = False) -> list[int]:
+    all_turns = divisors(len(ciphertext))
+
+    possible_turns = []
+    for turns in all_turns:
+        plaintext = scytale_decrypt(ciphertext, turns)
+
+        if ignore_case:
+            known = known_plaintext.lower()
+            plaintext = plaintext.lower()
+        else:
+            known = known_plaintext
+
+        if known in plaintext:
+            possible_turns.append(turns)
+
+    return possible_turns
+
+
+ciphertext = open("melding.txt", "rb").read().decode("utf-8")
+for turns in scytale_decrypt_bruteforce(ciphertext, "pst{"):
+    print(scytale_decrypt(ciphertext, turns))
+```
+
+
+### Svar
+
+> For et funn! Dette hører jo hjemme i et museum!
+> 
+> \- Mellomleder
+
