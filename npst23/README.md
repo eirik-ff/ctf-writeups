@@ -1166,3 +1166,78 @@ print(flag)
 > 
 > \- Mellomleder
 
+
+
+## Dag 16
+
+### Flagg
+
+`KRIPOS{Flagg i alle kriker og kroker}`
+
+
+### Oppgave
+
+> Invasjon
+> 
+> ---
+> 
+> Gjennom temmelig hemmelige innhentingsmetoder har vi fått tak i det vedlagte
+> dokumentet som avslører den egentlige hensikten bak løsepengeangrepet:
+> Sydpolare aktører planlegger å invadere Nordpolen for å stoppe julen én gang
+> for alle!
+> 
+> I dokumentet nevnes det at aktørene har plantet deep-cover agenter i blant
+> oss, og at de har hemmelige koder for å etablere kontakt med disse. Analyser
+> materialet og se om du klarer å avsløre de hemmelige kodene slik at vi kan få
+> disse agentene på kroken!
+> 
+> I mellomtiden iverksetter vi umiddelbare mottiltak for å stanse invasjonen.
+> 
+> \- Tastefinger
+
+Vedlegg:
+
+* [aksjon_2023.zip](./dag16/aksjon_2023.zip)
+    - [plan.md](./dag16/aksjon_2023/plan.md)
+    - [.git/](./dag16/aksjon_2023/dot-git/)
+
+### Løsning
+
+Når vi åpner zip-filen får vi en plan og en `.git`-mappe. Vi kan lete gjennom
+logs og branches og finner en interesant branch
+`origin/ikke-merge-før-julaften`. Når vi kjører `checkout` på den får vi en ny
+fil
+[`feltagenter_kontaktmanual.md`](/npst23/dag16/aksjon_2023/feltagenter_kontaktmanual.md)
+. Her er det derimot kun placeholdere, og ingen andre brancher eller commits har
+noe interessant. 
+
+Når vi leter gjennom `.git`-mappen finner vi to hooks:
+[`pre-commit`](./dag16/aksjon_2023/dot-git/hooks/pre-commit) og 
+[`pre-merge-commit`](./dag16/aksjon_2023/dot-git/hooks/pre-merge-commit). I den
+sistnevnte filen finner vi mange base64-enkodet strenger og `sed`-uttrykk for å
+modifisere filene før de merges. Vi ser også at hvis environment variabelen
+`DISABLE_SELF_DESTRUCT` er satt (`-z` betyr empty, altså ikke definert) kjøres
+vil ikke kodene bli slettet. 
+
+Vi kan defor kjøre 
+
+```bash
+DISABLE_SELF_DESTRUCT="1" git merge origin/ikke-merge-før-julaften
+```
+
+og få merget filene fra branchen til master og kjøre hooken _uten_ å slette
+kodene etter de har merget. Da får vi flagget i kontaktmanualen. 
+
+
+### Svar
+
+> Jeg tenker vi skal vagge ned til fiskeforhandleren og se hva vi ser jeg!
+> 
+> \- Tastefinger
+
+
+### Egg
+
+Hooken [`pre-commit`](./dag16/aksjon_2023/dot-git/hooks/pre-commit) hinter til
+at det finnes et egg i git-repoet. Jeg har derimot ikke klart å finne det. 
+
