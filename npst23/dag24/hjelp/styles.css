@@ -1,0 +1,137 @@
+body {
+    background-color: #1B1B1B;
+    color: #E7E8EB;
+}
+a {
+    color: #3387CC;
+}
+
+.top_menu {
+    background-color: #333;
+    text-align: center;
+    width: 100%;
+    height: auto;
+    position: fixed;
+    z-index: 999;
+    top: 0;
+}
+
+.all_container {
+    padding-top: 75px;
+    position: relative;
+}
+
+.sidebar_container {
+    width: auto;
+    height: auto;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    padding-left: 20px;
+    padding-right: 20px;
+    position: fixed;
+    top: 15%;
+    left: 2%;
+    background-color: #333;
+    color: white;
+    transition: margin-left 0.3s ease;
+    border-radius: 20px;
+}
+
+.main_area {
+    text-align: left;
+    position: absolute;
+    max-width: calc(100% - (1% + 400px));
+    min-width: 500px;
+    margin-right: 15%;
+    width: auto;
+    top: 0;
+    left: calc(1% + 400px);
+}
+
+.sidebar ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+.sidebar li {
+    margin-bottom: 10px;
+}
+
+.sub_list {
+    margin-top: 3px;
+    margin-left: 20px;
+}
+
+code {
+    font-family: 'Courier New', monospace; /* Set a monospaced font for better alignment */
+}
+
+pre {
+    background-color: #333; /* Set the background color of the code block */
+    padding: 10px; /* Add some padding for better readability */
+    border: 1px solid #ccc; /* Add a border for separation */
+    overflow: auto; /* Add a scrollbar for long code blocks */
+    width: auto;
+    text-align: left;
+    display: inline-block;
+}
+
+#parameter_div {
+    display: grid;
+    grid-template-columns: 1fr 3fr;
+    gap: 10px;
+}
+
+section, .anchor {
+    /*Top menu padding*/
+    padding-top: 40px;
+}
+
+a:hover {
+    color: #ff6600;
+}
+
+.menu ul {
+    list-style-type: none;
+    display: flex;
+    justify-content: center;
+}
+
+.menu li {
+    margin: 0 20px;
+}
+
+#lab {
+    padding-top: 75px;
+    width: auto;
+    position: absolute;
+    margin: auto;
+    left: 50%;
+    transform: translateX(-50%);
+    text-align: left;
+    box-sizing: border-box;
+}
+
+
+textarea {
+    background-color: #333; /* Dark background color */
+    color: #fff;
+}
+
+#noscript {
+    font-weight: bold;
+    color: red;
+    font-size: 35px;
+    text-align: center;
+}
+
+@keyframes subtleOutline {
+    0% { border-color: white; }
+    50% { border-color: #ffcc00; }
+    100% { border-color: white; }
+}
+
+.subtle-outline {
+    border: 1px solid white;
+    animation: subtleOutline 1s ease;
+}
