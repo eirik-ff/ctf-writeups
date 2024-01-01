@@ -1,21 +1,22 @@
-  - [Fault Injection](help.md#fi5h)
-      - [Hva er Voltage Fault Injection](help.md#hva)
-      - [Hvem bruker Fault Injection](help.md#hvem)
-      - [Hvor bruker man Fault Injection](help.md#hvor)
-      - [Hvorfor bruke Fault Injection](help.md#hvorfor)
-      - [Hvordan utføre Voltage Fault Injection](help.md#hvordan)
-          - [Overordnet](help.md#hvordan_overordnet)
-          - [Konkret eksempel](help.md#hvordan_eksempel)
-          - [Hvordan finne passende
-            parametre](help.md#hvordan_parametre)
-  - [Bruk av laben](help.md#howto)
-  - [Firmware reversing](help.md#firmware)
-  - [HMS](help.md#hms)
-      - [For laben sin del](help.md#hms_lab)
-      - [For din egen del](help.md#hms_deg)
-  - [Øvrig lesing](help.md#referanser)
+# Innhold
+- [Fault Injection: Hva, hvem, hvor, hvorfor, hvordan](README.md#fault-injection-hva-hvem-hvor-hvorfor-hvordan)
+  - [Hva er Voltage Fault Injection](README.md#hva-er-voltage-fault-injection)
+  - [Hvem bruker Fault Injection](README.md#hvem-bruker-fault-injection)
+  - [Hvor bruker man Fault Injection](README.md#hvor-bruker-man-fault-injection)
+  - [Hvorfor bruke Fault Injection](README.md#hvorfor-bruke-fault-injection)
+  - [Hvordan utføre Voltage Fault Injection](README.md#hvordan-utføre-voltage-fault-injection)
+      - [Overordnet](README.md#overordnet)
+      - [Konkret eksempel](README.md#konkret-eksempel)
+      - [Hvordan finne passende parametre](README.md#hvordan-finne-passende-parametre)
+- [Bruk av laben](README.md#bruk-av-laben)
+- [Firmware reversing](README.md#firmware-reversing)
+- [HMS](README.md#hms)
+  - [For laben sin del](README.md#for-laben-sin-del)
+  - [For din egen del](README.md#for-din-egen-del)
+- [Øvrig lesing](README.md#øvrig-lesing)
 
-## Fault Injection: Hva, hvem, hvor, hvorfor, hvordan
+
+# Fault Injection: Hva, hvem, hvor, hvorfor, hvordan
 
 Software inneholder i dag mange robuste sikkerhetsmekanismer som
 vanskeliggjør hackerier, datasnokoskopi og algoritmesjonglering.
@@ -36,7 +37,7 @@ Kriminalvpolitisentralens remote fault injection lab har vi i dag kun
 støtte for "voltage fault injection". For øvrige glitchemetoder må vi
 dessverre møte opp på kontoret enn så lenge ¯\\\_(ツ)\_/¯
 
-### Hva er Voltage Fault Injection
+## Hva er Voltage Fault Injection
 
 Voltage fault injection er en tilnærming som innebærer å bevisst
 forstyrre spenningsforsyningen til et system. Ofte vil dette i praksis
@@ -51,16 +52,16 @@ sårbar for må man nesten bare eksperimentere med for å finne ut av, men
 vi har allerede bekreftet at NISSE32-brikkene er sårbare mot denne typen
 angrep.
 
-### Hvem bruker Fault Injection
+## Hvem bruker Fault Injection
 
 Du.
 
-### Hvor bruker man Fault Injection
+## Hvor bruker man Fault Injection
 
 (Opprinnelig pekte denne til labben, men dette er ikke relevant når vi kun har
 hjelp-siden)
 
-### Hvorfor bruke Fault Injection
+## Hvorfor bruke Fault Injection
 
 Fault injection bruker vi for å angripe software *via* hardware. Sagt på
 en annen måte: et system som er 100% sikkert i software kan fortsatt (av
@@ -78,13 +79,13 @@ som ser slik ut:
 Det hadde vært ganske kult om du kunne hoppet over sammenligningen
 mellom `user.type` og `ADMIN` eller? Enig\!
 
-### Hvordan utføre Voltage Fault Injection
+## Hvordan utføre Voltage Fault Injection
 
 Voltage fault injection krever presisjon og spesialisert utstyr. Her i
 KRIAPOS har vi begge deler, så du kan bare lene deg tilbake med
 kaffekoppen fra gjemmekontoret og bruke laben remote.
 
-#### Overordnet
+### Overordnet
 
 Den grunnleggende arbeidsmetodikken består av reverse engineering av
 softwaren som kjører på systemet for å finne passende steder å glitche.
@@ -100,7 +101,7 @@ eksempel [Ghidra](https://ghidra-sre.org/) til å finne slike områder.
 Deretter må vi finne riktige *parametere* som lar oss faktisk treffe
 disse områdene med glitchen vår, men mer om det senere.
 
-#### Konkret eksempel
+### Konkret eksempel
 
 La oss ta for oss et oppdiktet eksempel. La oss si at den følgende
 pseudokoden ender i at variablen `result` blir noe annet enn 0 under
@@ -170,7 +171,7 @@ Til slutt vil vi bli tatt til addresse `0x1022` hvor vi bare
 returner fra funksjonen vi er i, om det så er direkte fra `lose()`,
 eller etter `win()` via branchen på addresse `0x1014`.
 
-##### Identifiserte muligheter
+#### Identifiserte muligheter
 
 Her har vi altså identifisert *minst* én addresse som trolig vil fungere
 å glitche på for å treffe `win()`-funksjonen; `0x100c`. Merk dog at det
@@ -205,7 +206,7 @@ sikkerhetsmekanismer i software, så ikke sett grenser for din egen
 fantasi. Vær kreativ, prøv, og aldri gi opp. Det gjør jo fryktelig vondt
 å tenke, men av og til er det ikke så dumt\!
 
-#### Hvordan finne passende parametre
+### Hvordan finne passende parametre
 
 Om du finner ut av dette må du gjerne skrive en doktorgrad om emnet, og
 sende den til oss. 
@@ -216,7 +217,7 @@ del av jobben. Heldigvis har fault injection riggen vår blitt ekstremt
 smart og robust, og vil gi deg veldig god hjelp på veien. Se eget
 avsnitt om bruk av laben for mer informasjon rundt dette.
 
-##### First things first: Hvilke parametre finnes
+#### First things first: Hvilke parametre finnes
 
 De viktigste parameterene når det gjelder voltage glitching hvor vi
 kutter strømtilførselen er: *bredden* på glitchen, og *delayen* på
@@ -241,7 +242,7 @@ ferdig med å lese inn en kommando fra USART som triggeren vår, og vi er
 ærlig talt litt usikre på hvorfor andre bruker den langt mindre
 nøyaktige oscilloskop-metoden...
 
-##### Second things second: Din første glitch
+#### Second things second: Din første glitch
 
 Til å begynne med må vi finne parametre som påvirker chipen i det hele
 tatt. Så lenge triggeren er på et sted hvor du vet at det eksekveres
@@ -289,7 +290,7 @@ gjøre det videre arbeidet ditt noe lettere. Når du er relativt fornøyd
 med at du klarer å styre glitchen din sånn ca på instruksjonsnivå kan du
 gå videre til neste skritt.
 
-##### Third things third: Hvordan glitche *der du vil*
+#### Third things third: Hvordan glitche *der du vil*
 
 Å få chipen til å skippe instruksjoner i det hele tatt kan være en liten
 bragd i seg selv, men det er her moroa begynner. Nå kan du
@@ -307,7 +308,7 @@ kanskje ta en ny titt på assemblyen og forsikre deg om at du forstår
 koden korrekt. Husk også at det er lov å spørre både ChatGPT og på
 discord (innenfor rimelighetens grenser).
 
-## Bruk av laben
+# Bruk av laben
 
 Laben gir deg tilgang på flere tekstbokser som viser deg statusen til
 ditt forrige angrep, samt kontroller for å styre disse angrepene. To av
@@ -349,7 +350,7 @@ I dagens angrep har vi allerede satt opp triggeren til å aktivere rett
 etter at brikken har lest inn din kommando fra USART, så ta høyde for
 dette når du setter delayen din.
 
-## Firmware reversing
+# Firmware reversing
 
 Reverse engineering av firmware er i grunn temmelig likt reverse
 engineering av hvilken som helst annen software. Det finnes dog noen
@@ -399,18 +400,18 @@ I tillegg til dette inneholder gjerne firmware mye bruk av tilsynelatende
 via de samme kanalene som ovenfor, i tillegg til liberal bruk av utdannede
 gjetninger.
 
-## HMS
+# HMS
 
 Laben kan være et farlig sted\! Sett deg **GODT** inn i retningslinjene
 under før du begir deg ut på eventyr i elektronikkens magiske verden\!
 
-### For laben sin del
+## For laben sin del
 
 Du må *alltid* huske på at du **ikke** må glemme at du aldri skal ha sko
 som *ikke* er ***anti-ESD*** sikrede når du går inn på laben
 (ikke-remote only).
 
-### For din egen del
+## For din egen del
 
 Ikke ta på ting som...
 
@@ -423,7 +424,7 @@ Ikke ta på ting som...
 
 ...vet du hva? Bare ikke ta på noe du.
 
-## Øvrig lesing
+# Øvrig lesing
 
   - [The Hardware Hacking Handbook](https://www.hardwarehacking.io/)
   - [Synacktiv - How to voltage fault injection](https://www.synacktiv.com/en/publications/how-to-voltage-fault-injection)
