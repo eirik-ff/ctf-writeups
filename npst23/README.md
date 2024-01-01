@@ -1831,3 +1831,112 @@ får vi dekryptert Excel-dokumentet og flagget ligger der.
 For et stikk mot NSM!
 [<sup>referanse</sup>](https://www.nrk.no/norge/difor-er-nsm-saka-alvorleg-1.16675273)
 
+
+
+## Dag 24
+
+### Flagg
+
+`KRIPOS{Zipp Zapp, endelig napp!}`
+
+
+### Oppgave
+
+> Stopp robot-armadaen!
+> 
+> ---
+> 
+> Hei eirikff,
+> 
+> Julegavemaskinen ved nissens verksted har over en lengre periode ikke
+> produsert annet enn smokingkledde roboter med vaggende gange. Nå har endelig
+> maskineriet blitt reparert, men det vagger fortsatt et par titalls tusen
+> robot-pingviner rundt i kontorene her som truer vår suverenitet over
+> Nordpolen.
+> 
+> Vi har vanligvis et innebygget override passord i alle brikkene våre for slike
+> nødtilfeller, men det ser ut til at passordet har blitt endret!
+> 
+> Undersøkelsene våre viser at noen har tuklet med maskineriet, og lastet opp
+> ukjent fastvare til mikrokontrollerene som vanligvis styrer lekene. I tillegg
+> var produksjonssettings-pipelinen kompromittert, hvor vi fant en ukjent enhet
+> koblet til USART-grensesnittet som utfører den endelige konfigurasjon av
+> mikrokontrollerene. Dessverre gikk denne enheten opp i røyk da vi prøvde å
+> koble den fra, så den er totaldestruert.
+> 
+> Etter noen innledende eksperimenter tror vi at disse brikkene kan være sårbare
+> mot fault injection angrep, og KRIAPOS har latt oss få remote tilgang til
+> elektronikk-laben deres for å jobbe videre med dette:
+> 
+> [kriapos.no](https://www.kriapos.no/96abdf8a9e6d2a1cfca9206c8e7e0a97/)
+> 
+> Laben er allerede satt opp med en brikke som vi har tatt ut av en
+> robot-pingvin. Se om du klarer å få tak i dataen fra denne slik at vi kan se
+> hva override passordet har blitt satt til.
+> 
+> Vi har delt all dataen dere trenger med de samarbeidende etatene allerede, så
+> du vil motta disse fra din kontaktperson veldig snart.
+> 
+> Svar meg på denne eposten når du finner ut av dette!
+
+
+#### NISM
+
+Igjen var det en samarbeidsoppgave der man må få filer fra de andre tjenestene.
+Her er mailen og filene fra NISM:
+
+> Robot-armada: NISM
+> 
+> ---
+> 
+> Hei alle sammen!
+> 
+> Vi har fått utdelt noen filer i forbindelse med Nisse-saken, og jeg har blitt
+> bedt om å dele disse videre til relevant personnel. Filene ligger vedlagt.
+> 
+> Vi fikk også denne beskjeden sammen med filene:
+> 
+> > Vedlagt ligger den ondsinnede fastvaren som er ekstrahert fra
+> > julegavemaskinen: “mykepakkervare.bin”, samt databladet for NISSE32-brikken.
+> > Vi tror også kanskje at de har bygget videre på vår vanlige fastvare, så
+> > alvdelingen for fastepakkervare har ordnet en debug-variant av fastvaren vi
+> > vanligvis bruker: “fastepakkervare.elf”.
+> 
+> Jeg fikk noe pakketap da jeg lastet ned filene, men det har sikkert gått fint.
+> Eventuelt har vel dere teknikere kommunikasjon på tvers av etatene på discord?
+> OBS! Ikke stol blindt på filer du mottar fra andre; dobbeltsjekk hashen i
+> md5sum.txt og bruk gjerne en VM.
+
+Vedlegg: 
+
+* [nism.zip](./dag24/nism.zip)
+    - [datasheet.pdf](./dag24/datasheet.pdf)
+    - [md5sum.txt](./dag24/md5sum.txt)
+
+
+#### Alle utleverte filer
+
+* [datasheet.pdf](./dag24/datasheet.pdf)
+* [fastepakkervare.elf](./dag24/fastepakkervare.elf)
+* [mykepakkervare.bin](./dag24/mykepakkervare.bin)
+
+
+### Løsning
+
+TODO
+
+
+### Svar
+
+> Tusen takk!
+> 
+> Julen er reddet! Takk for fantastisk innsats både i dag og i hele desember.
+> Det har vært bra å ha deg med på laget.
+> 
+> God jul! 🎄🎁
+
+
+### Egg
+
+`EGG{3rr0r! Unr34ch4bl3 c0d3 d373c73d!}`
+
