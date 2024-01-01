@@ -1,7 +1,3 @@
-<div class="all_container">
-
-<div class="sidebar_container">
-
   - [Fault Injection](help.html#fi5h)
       - [Hva er Voltage Fault Injection](help.html#hva)
       - [Hvem bruker Fault Injection](help.html#hvem)
@@ -18,14 +14,6 @@
       - [For laben sin del](help.html#hms_lab)
       - [For din egen del](help.html#hms_deg)
   - [Øvrig lesing](help.html#referanser)
-
-</div>
-
-<div class="main_area">
-
-<div role="main">
-
-<div id="fi5h" class="section">
 
 ## Fault Injection: Hva, hvem, hvor, hvorfor, hvordan
 
@@ -44,8 +32,6 @@ Kriminalvpolitisentralens remote fault injection lab har vi i dag kun
 støtte for "voltage fault injection". For øvrige glitchemetoder må vi
 dessverre møte opp på kontoret enn så lenge ¯\\\_(ツ)\_/¯
 
-<div id="hva" class="section">
-
 ### Hva er Voltage Fault Injection
 
 Voltage fault injection er en tilnærming som innebærer å bevisst
@@ -59,34 +45,22 @@ sårbar for må man nesten bare eksperimentere med for å finne ut av, men
 vi har allerede bekreftet at NISSE32-brikkene er sårbare mot denne typen
 angrep.
 
-</div>
-
-<div id="hvem" class="section">
-
 ### Hvem bruker Fault Injection
 
 Du.
 
-</div>
-
-<div id="hvor" class="section">
-
 ### Hvor bruker man Fault Injection
 
 [Her.](index.html)
-
-</div>
-
-<div id="hvorfor" class="section">
 
 ### Hvorfor bruke Fault Injection
 
 Fault injection bruker vi for å angripe software *via* hardware. Sagt på
 en annen måte: et system som er 100% sikkert i software kan fortsatt (av
 og til) knekkes via angrep mot hardware. Den *observerte effekten* av
-slike angrep vil typisk være **<span class="underline">*at brikken
-hopper over instruksjoner*</span>**, slik at disse ikke kjøres. Tenk deg
-for eksempel at du har en kodesnutt som ser slik ut:
+slike angrep vil typisk være ***at brikken hopper over instruksjoner***,
+slik at disse ikke kjøres. Tenk deg for eksempel at du har en kodesnutt
+som ser slik ut:
 
     if (user.type == ADMIN):
         go_to_admin_panel()
@@ -96,21 +70,13 @@ for eksempel at du har en kodesnutt som ser slik ut:
 Det hadde vært ganske kult om du kunne hoppet over sammenligningen
 mellom `user.type` og `ADMIN` eller? Enig\!
 
-</div>
-
-<div id="hvordan" class="section">
-
 ### Hvordan utføre Voltage Fault Injection
 
 Voltage fault injection krever presisjon og spesialisert utstyr. Her i
 KRIAPOS har vi begge deler, så du kan bare lene deg tilbake med
 kaffekoppen fra gjemmekontoret og bruke laben remote.
 
-<div id="hvordan_overordnet" class="anchor">
-
 #### Overordnet
-
-</div>
 
 Den grunnleggende arbeidsmetodikken består av reverse engineering av
 softwaren som kjører på systemet for å finne passende steder å glitche.
@@ -123,11 +89,7 @@ eksempel [Ghidra](https://ghidra-sre.org/) til å finne slike områder.
 Deretter må vi finne riktige *parametere* som lar oss faktisk treffe
 disse områdene med glitchen vår, men mer om det senere.
 
-<div id="hvordan_eksempel" class="anchor">
-
 #### Konkret eksempel
-
-</div>
 
 La oss ta for oss et oppdiktet eksempel. La oss si at den følgende
 pseudokoden ender i at variablen `result` blir noe annet enn 0 under
@@ -164,67 +126,50 @@ pseudoassembly:
     0x1018: bl      lose()
     0x1022: pop     {pc}
 
-På addresse <span style="color: #ff4400;">0x1000</span> lastes
-`some_variable` inn i *registeret* `r1` fra et annet register, `r2`, før
-`check()` funksjonen kalles på addresse
-<span style="color: #ff4400;">0x1004</span>. Når vi har kommet tilbake
-fra `check()`-funksjonen igjen skjer selve sammenligningen i if-testen
-på addresse <span style="color: #00ffd9;">0x1008</span>, hvor verdien i
+På addresse 0x1000 lastes `some_variable` inn i *registeret* `r1` fra et
+annet register, `r2`, før `check()` funksjonen kalles på addresse
+0x1004. Når vi har kommet tilbake fra `check()`-funksjonen igjen skjer
+selve sammenligningen i if-testen på addresse 0x1008, hvor verdien i
 *registeret* `r0` sammenlignes med den statiske verdien `0`. Merk at det
 er ganske typisk (men ikke 100% garantert) at returverdier fra
 funksjoner lagres i registeret `r0` i ARM. Så skjer selve "avgjørelsen"
-om hvilken vei vi skal ta i if-testen på addresse
-<span style="color: #ffdd00">0x100c</span> , **og her er den viktigste
-delen\!** Som vi kan se vil branchen ("hoppet") skje til
+om hvilken vei vi skal ta i if-testen på addresse 0x100c , **og her er
+den viktigste delen\!** Som vi kan se vil branchen ("hoppet") skje til
 `lose()`-funksjonen, mens instruksjonen som kommer rett etterpå tar oss
 rett til `win()`. Altså hvis vi klarer å glitche slik at vi hopper over
-instruksjonen på <span style="color: #ffdd00">0x100c</span> vil vi være
-i mål\! På <span style="color: #40ff00">0x1010</span> kalles
+instruksjonen på 0x100c vil vi være i mål\! På 0x1010 kalles
 `win()`-funksjonen, men som nevnt er ikke det normaltilstanden i vårt
 eksempel. Det er hit vi ønsker å jukse oss frem til, for eksempel ved å
 hoppe over instruksjonen rett før. Om programmet derimot får kjøre som
-vanlig vil vi branche til addresse
-<span style="color: #ff0000">0x1018</span>, og vi vil få en `lose()`
-midt i fleisen\! Til slutt vil vi bli tatt til addresse
-<span style="color: #0080ff">0x1022</span> hvor vi bare returner fra
-funksjonen vi er i, om det så er direkte fra `lose()`, eller etter
-`win()` via branchen på addresse
-<span style="color: #0080ff">0x1014</span>.
+vanlig vil vi branche til addresse 0x1018, og vi vil få en `lose()` midt
+i fleisen\! Til slutt vil vi bli tatt til addresse 0x1022 hvor vi bare
+returner fra funksjonen vi er i, om det så er direkte fra `lose()`,
+eller etter `win()` via branchen på addresse 0x1014.
 
 ##### Identifiserte muligheter
 
 Her har vi altså identifisert *minst* én addresse som trolig vil fungere
-å glitche på for å treffe `win()`-funksjonen;
-<span style="color: #ffdd00">0x100c</span>. Merk dog at det også er
-flere andre addresser som *kan* fungere her: Hvis vi glitcher på
-<span style="color: #00ffd9;">0x1008</span> vil branchen på
-<span style="color: #ffdd00">0x100c</span> være avhengig av *forrige
-gang* en operasjon påvirket "zero flag"et (forrige gang en "cmp"
-instruksjon ble kjørt for eksempel). Hvis vi glitcher på
-<span style="color: #ff4400;">0x1004</span> vil resultatet av
-sammenligningen på <span style="color: #00ffd9;">0x1008</span> avhenge
-av hva som ligger i `r0` registeret fra før av. Hvis vi glitcher på
-<span style="color: #ff4400;">0x1000</span> kan det hende at det som
-ligger i `r1` fra før av også vil endre utfallet av
-`check()`-funksjonen, og få den til å returnere 0. Det finnes også
-trolig flere addresser *inne i* `check()`-funksjonen som vil få
-funksjonen til å returnere 0. Og så videre, og så videre. Å glitche på
-<span style="color: #ffdd00">0x100c</span> virker veldig lovende her,
+å glitche på for å treffe `win()`-funksjonen; 0x100c. Merk dog at det
+også er flere andre addresser som *kan* fungere her: Hvis vi glitcher på
+0x1008 vil branchen på 0x100c være avhengig av *forrige gang* en
+operasjon påvirket "zero flag"et (forrige gang en "cmp" instruksjon ble
+kjørt for eksempel). Hvis vi glitcher på 0x1004 vil resultatet av
+sammenligningen på 0x1008 avhenge av hva som ligger i `r0` registeret
+fra før av. Hvis vi glitcher på 0x1000 kan det hende at det som ligger i
+`r1` fra før av også vil endre utfallet av `check()`-funksjonen, og få
+den til å returnere 0. Det finnes også trolig flere addresser *inne i*
+`check()`-funksjonen som vil få funksjonen til å returnere 0. Og så
+videre, og så videre. Å glitche på 0x100c virker veldig lovende her,
 mens andre addresser i umiddelbar nærhet *kanskje også* funker. Dette er
 et ganske godt utgangspunkt for å glitche, da vi typisk ikke klarer å
 treffe *akkurat* der vi ønsker hver gang. Dette illustrerer også
 viktigheten i å ikke *begrense* seg til å kun se etter if-setninger og
 lignende. Det finnes veldig mange steder man kan glitche for å lure
 sikkerhetsmekanismer i software, så ikke sett grenser for din egen
-fantasi. Vær kreativ, <span class="underline">prøv</span>, og aldri gi
-opp. Det gjør jo fryktelig vondt å tenke, men av og til er det ikke så
-dumt\!
-
-<div id="hvordan_parametre" class="anchor">
+fantasi. Vær kreativ, prøv, og aldri gi opp. Det gjør jo fryktelig vondt
+å tenke, men av og til er det ikke så dumt\!
 
 #### Hvordan finne passende parametre
-
-</div>
 
 Om du finner ut av dette må du gjerne skrive en doktorgrad om emnet, og
 sende den til oss. Men fra spøk til alvor; å finne "riktige" parametre
@@ -245,8 +190,7 @@ punkt i kode-eksekveringen, og dermed baserer man glitchen sin på den.
 Vanligvis vil man gjøre noe sånt som å se på strømforbruket til chipen,
 og f.eks identifisere at den har begynt å lese fra flash på grunn av
 endret strømforbruk. Her i KRIAPOS laben derimot bruker vi julemagi og
-vennskap til å identifisere
-**<span class="underline">*nøyaktig*</span>** når mikrokontrolleren er
+vennskap til å identifisere ***nøyaktig*** når mikrokontrolleren er
 ferdig med å lese inn en kommando fra USART som triggeren vår, og vi er
 ærlig talt litt usikre på hvorfor andre bruker den langt mindre
 nøyaktige oscilloskop-metoden...
@@ -303,10 +247,6 @@ kanskje ta en ny titt på assemblyen og forsikre deg om at du forstår
 koden korrekt. Husk også at det er lov å spørre både ChatGPT og på
 discord (innenfor rimelighetens grenser).
 
-</div>
-
-<div id="howto" class="section">
-
 ## Bruk av laben
 
 Laben gir deg tilgang på flere tekstbokser som viser deg statusen til
@@ -325,20 +265,12 @@ dataen du sender inn til brikken under et angrep, og er kritisk for å
 kunne styre programflyten dit du vil. Om du for eksempel bare vil
 kommunisere enkelt med brikken kan du sende kommando slik, med 0 bredde:
 
-<div style="text-align: center;">
-
 ![](img/lab1.png)
-
-</div>
 
 Noen få sekunder senere vil riggen vår være ferdig med "angrepet", og
 vise deg resultatet i USART tekstboksene:
 
-<div style="text-align: center;">
-
 ![](img/lab2.png)
-
-</div>
 
 Under "USART kommando" har vi kontroller for bredde og delay i selve
 glitchen. Disse feltene støtter matematiske uttrykk for å gjøre arbeidet
@@ -347,19 +279,11 @@ mikrokontrolleren har en klokkesyklus på 100ps, bruker 4 sykluser per
 instruksjon, og du ønsker å glitche etter ca 255 instruksjoner med en
 bredde på 1,3 sykluser, kan du sende noe slik:
 
-<div style="text-align: center;">
-
 ![](img/lab3.png)
-
-</div>
 
 I dagens angrep har vi allerede satt opp triggeren til å aktivere rett
 etter at brikken har lest inn din kommando fra USART, så ta høyde for
 dette når du setter delayen din.
-
-</div>
-
-<div id="firmware" class="section">
 
 ## Firmware reversing
 
@@ -402,28 +326,16 @@ firmware mye bruk av tilsynelatende "magiske" addresser og verdier.
 Betydningen av disse verdiene finner man gjerne via de samme kanalene
 som ovenfor, i tillegg til liberal bruk av utdannede gjetninger.
 
-</div>
-
-<div id="hms" class="section">
-
 ## HMS
 
 Laben kan være et farlig sted\! Sett deg **GODT** inn i retningslinjene
 under før du begir deg ut på eventyr i elektronikkens magiske verden\!
 
-<div id="hms_lab" class="section">
-
 ### For laben sin del
 
-Du må *alltid* huske på at du **ikke** må glemme at du
-<span class="underline">aldri</span> skal ha sko som
-*<span class="underline">ikke</span>* er
-**<span class="underline">*anti-ESD*</span>** sikrede når du går inn på
-laben (ikke-remote only).
-
-</div>
-
-<div id="hms_deg" class="section">
+Du må *alltid* huske på at du **ikke** må glemme at du aldri skal ha sko
+som *ikke* er ***anti-ESD*** sikrede når du går inn på laben
+(ikke-remote only).
 
 ### For din egen del
 
@@ -438,25 +350,9 @@ Ikke ta på ting som...
 
 ...vet du hva? Bare ikke ta på noe du.
 
-</div>
-
-</div>
-
-<div id="referanser" class="section">
-
 ## Øvrig lesing
 
   - [](https://www.hardwarehacking.io/)The Hardware Hacking Handbook
   - [](https://www.synacktiv.com/en/publications/how-to-voltage-fault-injection)Synacktiv
     - How to voltage fault injection
   - [](https://raelize.com/blog/)Raelize blog
-
-</div>
-
-</div>
-
-</div>
-
-</div>
-
-</div>
