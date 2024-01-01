@@ -1,19 +1,19 @@
-  - [Fault Injection](help.html#fi5h)
-      - [Hva er Voltage Fault Injection](help.html#hva)
-      - [Hvem bruker Fault Injection](help.html#hvem)
-      - [Hvor bruker man Fault Injection](help.html#hvor)
-      - [Hvorfor bruke Fault Injection](help.html#hvorfor)
-      - [Hvordan utføre Voltage Fault Injection](help.html#hvordan)
-          - [Overordnet](help.html#hvordan_overordnet)
-          - [Konkret eksempel](help.html#hvordan_eksempel)
+  - [Fault Injection](help.md#fi5h)
+      - [Hva er Voltage Fault Injection](help.md#hva)
+      - [Hvem bruker Fault Injection](help.md#hvem)
+      - [Hvor bruker man Fault Injection](help.md#hvor)
+      - [Hvorfor bruke Fault Injection](help.md#hvorfor)
+      - [Hvordan utføre Voltage Fault Injection](help.md#hvordan)
+          - [Overordnet](help.md#hvordan_overordnet)
+          - [Konkret eksempel](help.md#hvordan_eksempel)
           - [Hvordan finne passende
-            parametre](help.html#hvordan_parametre)
-  - [Bruk av laben](help.html#howto)
-  - [Firmware reversing](help.html#firmware)
-  - [HMS](help.html#hms)
-      - [For laben sin del](help.html#hms_lab)
-      - [For din egen del](help.html#hms_deg)
-  - [Øvrig lesing](help.html#referanser)
+            parametre](help.md#hvordan_parametre)
+  - [Bruk av laben](help.md#howto)
+  - [Firmware reversing](help.md#firmware)
+  - [HMS](help.md#hms)
+      - [For laben sin del](help.md#hms_lab)
+      - [For din egen del](help.md#hms_deg)
+  - [Øvrig lesing](help.md#referanser)
 
 ## Fault Injection: Hva, hvem, hvor, hvorfor, hvordan
 
@@ -51,7 +51,8 @@ Du.
 
 ### Hvor bruker man Fault Injection
 
-[Her.](index.html)
+(Opprinnelig pekte denne til labben, men dette er ikke relevant når vi kun har
+hjelp-siden)
 
 ### Hvorfor bruke Fault Injection
 
@@ -64,8 +65,7 @@ som ser slik ut:
 
     if (user.type == ADMIN):
         go_to_admin_panel()
-    else:
-        go_to_lame_normal_user_panel()
+    else: go_to_lame_normal_user_panel()
 
 Det hadde vært ganske kult om du kunne hoppet over sammenligningen
 mellom `user.type` og `ADMIN` eller? Enig\!
@@ -307,24 +307,26 @@ skal skrives, og for å gi informasjon relatert til debugging. For å
 finne ut av nødvendig informasjon for reverse engineering av firmware,
 som baseaddresse og instruksjonssett må du kanskje:
 
-Lese databladet til chipen
+- Lese databladet til chipen
 
-Få tak i informasjon om bygge-prosessen
+- Få tak i informasjon om bygge-prosessen
 
-Få tak i en debug-build
+- Få tak i en debug-build
 
-Dedusere informasjon basert på binæren
+- Dedusere informasjon basert på binæren
 
-  - Firmware starter ofte med et "Interrupt Vector Table", eller noe
-    tilsvarende, som kan være nyttig for å finne entry point, exception
-    handlere og mer
+    - Firmware starter ofte med et "Interrupt Vector Table", eller noe
+      tilsvarende, som kan være nyttig for å finne entry point, exception
+      handlere og mer
 
-Ringe en venn
+- Ringe en venn
 
-Eller en kombinasjon av disse. I tillegg til dette inneholder gjerne
-firmware mye bruk av tilsynelatende "magiske" addresser og verdier.
-Betydningen av disse verdiene finner man gjerne via de samme kanalene
-som ovenfor, i tillegg til liberal bruk av utdannede gjetninger.
+Eller en kombinasjon av disse. 
+
+I tillegg til dette inneholder gjerne firmware mye bruk av tilsynelatende
+"magiske" addresser og verdier. Betydningen av disse verdiene finner man gjerne
+via de samme kanalene som ovenfor, i tillegg til liberal bruk av utdannede
+gjetninger.
 
 ## HMS
 
@@ -352,7 +354,7 @@ Ikke ta på ting som...
 
 ## Øvrig lesing
 
-  - [](https://www.hardwarehacking.io/)The Hardware Hacking Handbook
-  - [](https://www.synacktiv.com/en/publications/how-to-voltage-fault-injection)Synacktiv
-    - How to voltage fault injection
-  - [](https://raelize.com/blog/)Raelize blog
+  - [The Hardware Hacking Handbook](https://www.hardwarehacking.io/)
+  - [Synacktiv - How to voltage fault injection](https://www.synacktiv.com/en/publications/how-to-voltage-fault-injection)
+  - [Raelize blog](https://raelize.com/blog/)
+
