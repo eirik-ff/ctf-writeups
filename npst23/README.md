@@ -1747,9 +1747,7 @@ for chunk in wal.split(b"\x04\x55")[1:]:
     int_size = chunk[1]
     uuid = chunk[2:38].decode()
     name = chunk[38:-4 - int_size].decode()
-    quantity_bytes = chunk[-4 - int_size:-4]
-
-    print("int size", int_size, uuid, name, int.from_bytes(quantity_bytes, "big"))
+    quantity_bytes = chunk[-4 - int_size:-4] print("int size", int_size, uuid, name, int.from_bytes(quantity_bytes, "big"))
 ```
 
 
@@ -1758,4 +1756,78 @@ for chunk in wal.split(b"\x04\x55")[1:]:
 > Hm, det er noen som ikke liker Mindflex her, altså.
 > 
 > Takk for hjelpen!
+
+
+## Dag 23
+
+### Flagg
+
+`PST{alternativ_pengestrøm}`
+
+
+### Oppgave
+
+> KVU-dokumenter
+> 
+> ---
+> 
+> Hei eirikff,
+> 
+> Taskforce ALV utvides stadig og trenger derfor nye lokaler, og dermed er det
+> satt i gang en Konseptvalgsutredning.
+> 
+> Vi har leid inn arkitektfirmaet Juxx og Fauxtneri for å bistå med forslag til
+> nye bygg. Men i lys av aktuelle hendelser har vi innsett at vi må gå arbeidet
+> deres litt mer i sømmene.
+> 
+> Vi må forsikre oss om at det ikke skjuler seg noe juks eller fanteri i
+> arbeidet deres. Vi har fått tilgang til budsjettet deres, og et utkast til et
+> nytt bygg. Problemet er at budsjettet er kryptert, så vi får ikke lest det.
+> Har du noen alternative løsninger?
+
+Vedlegg:
+
+* [juxxOgFauxtneri.wim](./dag23/juxxOgFauxtneri.wim)
+
+
+### Løsning
+
+Vi får utlevert en `.wim` fil som er en `juxxOgFauxtneri.wim: Windows imaging
+(WIM) image`. Jeg har aldri hørt om dette formatet før, men `7z` pakker det ut
+uten problem, og vi får en mappe `Nedbetalingsplan/`
+
+```
+Nedbetalingsplan/
+├── blueprint.png
+├── Cashflow.xlsx.encrypted
+└── Cashflow.xlsx.encrypted:dekrypter_budsjett.py
+```
+
+![blueprint.png](./dag23/Nedbetalingsplan/blueprint.png)
+
+Vi får et blueprint sammen med et kryptert Excel-dokument og et Python script.
+Jeg tror jeg var heldig som var på Linux her, fordi det ser ut som
+Python-scriptet er skjult i Excel-filen på en måte. Jeg mistenker dette kan være
+["Alternative Data
+Streams"](https://www.malwarebytes.com/blog/news/2015/07/introduction-to-alternate-data-streams)
+i NTFS på Windows, men har ikke bekreftet det. Uansett, vi trenger en nøkkel for
+å dekryptere Excel-dokumentet. Det er ikke synlig i blueprinten, men nøkkelen
+viser seg å skjule seg i det ene blå bit-laget av filen, se
+[Aperi'Solve](https://www.aperisolve.com/225fa815f20c88ccf7968555d22244fc).
+Nøkkelen er `e24f52497bcf4c332f1283ec925f77a1`, og når vi kjører Python-scriptet
+får vi dekryptert Excel-dokumentet og flagget ligger der. 
+
+
+### Svar
+
+> Takk, det var bra du fant dette!
+> 
+> For å ha godtatt dette tilbudet måtte vi uansett ha pådratt oss gjeld med
+> ugunstige vilkår, og som vi alle vet er det kun Nissetinget som har lov til å
+> pådra seg gjeld på vegne av den Nordpolarske stat.
+> 
+> Greit å unngå noen problemer der
+
+For et stikk mot NSM!
+[<sup>referanse</sup>](https://www.nrk.no/norge/difor-er-nsm-saka-alvorleg-1.16675273)
 
