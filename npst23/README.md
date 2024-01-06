@@ -3,8 +3,36 @@
 Dette var PSTs julekalender-CTF for julen 2023. I år var det i også i samarbeid
 med NSM og Kripos. 
 
+## Innholdsfortegnelse
+
+- [Dag 1](#dag-1)
+- [Dag 2](#dag-2)
+- [Dag 3](#dag-3)
+- [Dag 4](#dag-4)
+- [Dag 5](#dag-5)
+- [Dag 6](#dag-6)
+- [Dag 7](#dag-7) 
+- [Dag 8](#dag-8)
+- [Dag 9](#dag-9)
+- [Dag 10](#dag-10)
+- [Dag 11](#dag-11)
+- [Dag 12](#dag-12)
+- [Dag 13](#dag-13)
+- [Dag 14](#dag-14)
+- [Dag 15](#dag-15)
+- [Dag 16](#dag-16)
+- [Dag 17](#dag-17)
+- [Dag 18](#dag-18)
+- [Dag 19](#dag-19)
+- [Dag 20](#dag-20)
+- [Dag 21](#dag-21)
+- [Dag 22](#dag-22)
+- [Dag 23](#dag-23)
+- [Dag 24](#dag-24)
 
 ## Dag 1
+
+[<sup>Tilbake til innholdsfortegnelse</sup>](#innholdsfortegnelse)
 
 ### Flagg
 
@@ -76,6 +104,8 @@ print(flag)
 
 ## Dag 2
 
+[<sup>Tilbake til innholdsfortegnelse</sup>](#innholdsfortegnelse)
+
 ### Flagg
 
 `PST{LØSTE_DU_DENNE_SOM_PUSLESPILL_ELLER_KUBE?:)}`
@@ -133,6 +163,8 @@ oss da flagget.
 
 
 ## Dag 3
+
+[<sup>Tilbake til innholdsfortegnelse</sup>](#innholdsfortegnelse)
 
 ### Flagg
 
@@ -232,6 +264,8 @@ print(dec.decode("latin-1"))
 
 ## Dag 4
 
+[<sup>Tilbake til innholdsfortegnelse</sup>](#innholdsfortegnelse)
+
 ### Flagg
 
 `PST{ASCII_art_er_kult}`
@@ -319,6 +353,8 @@ Den sammensatte sleden kan sees i [`slede.txt`](./dag4/slede.txt).
 
 ## Dag 5
 
+[<sup>Tilbake til innholdsfortegnelse</sup>](#innholdsfortegnelse)
+
 ### Flagg
 
 `PST{FROGN BIBLIOTEK}`
@@ -398,6 +434,8 @@ og vi finner dermed "Frogn bibliotek".
 
 
 ## Dag 6
+
+[<sup>Tilbake til innholdsfortegnelse</sup>](#innholdsfortegnelse)
 
 ### Flagg
 
@@ -491,6 +529,8 @@ Merk at ZWJ har en annen byte-representasjon enn Unicode code point.
 
 ## Dag 7
 
+[<sup>Tilbake til innholdsfortegnelse</sup>](#innholdsfortegnelse)
+
 ### Flagg
 
 `NSM{af0dbd13cee45990593c182b213f978d}`
@@ -552,6 +592,8 @@ print(m)
 
 ## Dag 8
 
+[<sup>Tilbake til innholdsfortegnelse</sup>](#innholdsfortegnelse)
+
 ### Flagg
 
 `NSM{65d77649dcd02ab0fed102c3e3d3d33faba1874038c7bda737c40604021034b4}`
@@ -610,6 +652,8 @@ Dance](https://www.youtube.com/watch?v=j9V78UbdzWI). Du kan høre den
 
 ## Dag 9
 
+[<sup>Tilbake til innholdsfortegnelse</sup>](#innholdsfortegnelse)
+
 ### Flagg
 
 `KRIPOS{13:20}`
@@ -658,6 +702,8 @@ tidspunktet hvor skyggen faller omtrent som på bildet.
 
 
 ## Dag 10
+
+[<sup>Tilbake til innholdsfortegnelse</sup>](#innholdsfortegnelse)
 
 ### Flagg
 
@@ -718,6 +764,8 @@ print(flag)
 
 
 ## Dag 11
+
+[<sup>Tilbake til innholdsfortegnelse</sup>](#innholdsfortegnelse)
 
 ### Flagg
 
@@ -829,6 +877,8 @@ with open("melding.enc", "rb") as f:
 
 ## Dag 12
 
+[<sup>Tilbake til innholdsfortegnelse</sup>](#innholdsfortegnelse)
+
 ### Flagg
 
 `PST{I_cAn_HaZ_rEciprOCaTeD_tRuzT?}`
@@ -907,6 +957,8 @@ print("Flag:", flag)
 
 ## Dag 13
 
+[<sup>Tilbake til innholdsfortegnelse</sup>](#innholdsfortegnelse)
+
 ### Flagg
 
 `KRIPOS{Perth}`
@@ -948,6 +1000,8 @@ innsiden av baren "Beer Corner".
 
 
 ## Dag 14
+
+[<sup>Tilbake til innholdsfortegnelse</sup>](#innholdsfortegnelse)
 
 ### Flagg
 
@@ -1072,6 +1126,8 @@ kan uansett forstå meningen, og får flagget.
 
 ## Dag 15
 
+[<sup>Tilbake til innholdsfortegnelse</sup>](#innholdsfortegnelse)
+
 ### Flagg
 
 `PST{e32ba07d1254bafd1683b109c0fd6d6c}`
@@ -1170,6 +1226,8 @@ print(flag)
 
 ## Dag 16
 
+[<sup>Tilbake til innholdsfortegnelse</sup>](#innholdsfortegnelse)
+
 ### Flagg
 
 `KRIPOS{Flagg i alle kriker og kroker}`
@@ -1245,6 +1303,8 @@ at det finnes et egg i git-repoet. Jeg har derimot ikke klart å finne det.
 
 ## Dag 17
 
+[<sup>Tilbake til innholdsfortegnelse</sup>](#innholdsfortegnelse)
+
 ### Flagg
 
 `pst{nede for telling}`
@@ -1311,6 +1371,8 @@ print(flag)
 
 
 ## Dag 18
+
+[<sup>Tilbake til innholdsfortegnelse</sup>](#innholdsfortegnelse)
 
 ### Flagg
 
@@ -1430,6 +1492,8 @@ for turns in scytale_decrypt_bruteforce(ciphertext, "pst{"):
 
 
 ## Dag 19
+
+[<sup>Tilbake til innholdsfortegnelse</sup>](#innholdsfortegnelse)
 
 ### Flagg
 
@@ -1553,6 +1617,8 @@ print(flag)
 
 ## Dag 20
 
+[<sup>Tilbake til innholdsfortegnelse</sup>](#innholdsfortegnelse)
+
 ### Flagg
 
 (Ikke løst)
@@ -1593,6 +1659,8 @@ TODO: skriv notater så langt
 
 
 ## Dag 21
+
+[<sup>Tilbake til innholdsfortegnelse</sup>](#innholdsfortegnelse)
 
 ### Flagg
 
@@ -1639,6 +1707,8 @@ bruke mer tid på dette, og ga meg tidlig.
 
 
 ## Dag 22
+
+[<sup>Tilbake til innholdsfortegnelse</sup>](#innholdsfortegnelse)
 
 ### Flagg
 
@@ -1759,6 +1829,8 @@ for chunk in wal.split(b"\x04\x55")[1:]:
 
 ## Dag 23
 
+[<sup>Tilbake til innholdsfortegnelse</sup>](#innholdsfortegnelse)
+
 ### Flagg
 
 `PST{alternativ_pengestrøm}`
@@ -1833,6 +1905,8 @@ For et stikk mot NSM!
 
 
 ## Dag 24
+
+[<sup>Tilbake til innholdsfortegnelse</sup>](#innholdsfortegnelse)
 
 ### Flagg
 
@@ -2075,4 +2149,7 @@ det var 8 `cycle_pin` kall etterfulgt av et `usleep` kall. Jeg lagde scriptet
 [`limb-control.py`](./dag24/limb-control.py) for å se hva vi får. Det er derimot
 bare en melding som sier at dette ikke er et egg: `julegaveregg finner du et
 annet sted ;)nisseluer` (kjedelig :( )
+
+
+[<sup>Tilbake til innholdsfortegnelse</sup>](#innholdsfortegnelse)
 
