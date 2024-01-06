@@ -12,7 +12,6 @@ med NSM og Kripos.
 
 
 ### Oppgave
-
 > Mobil-detektiven 📱
 > 
 > ---
@@ -1917,13 +1916,105 @@ Vedlegg:
 #### Alle utleverte filer
 
 * [datasheet.pdf](./dag24/datasheet.pdf)
+    - Datablad for NISSE32-brikken 
 * [fastepakkervare.elf](./dag24/fastepakkervare.elf)
+    - Opprinnelig firmware med nyttige ELF-headere
 * [mykepakkervare.bin](./dag24/mykepakkervare.bin)
+    - Rå binærfil av modifisert firmware
 
 
 ### Løsning
 
-TODO
+Denne oppgaven er en veldig god introduksjon til hardware glitching, dog kun i
+en forenklet simulator/lab. Kriapos sine nettsider hoster labben samt en
+hjelp-side som forklarer hvordan hardware glitching fungerer. Jeg har klonet og
+konvertert denne hjelp-siden til Markdown for fremtidig referanse. Du kan se den
+[her](./dag24/hjelp/README.md). Dette guiden er veldig nyttig for den som ønsker
+å lære og forstå glitching. 
+
+For å utføre glitchen og få flagget må vi først gjøre analyse av firmwaren og
+deretter finne de rette parameterne. 
+
+#### Analyse av firmware
+
+`fastepakkervare.elf` kommer heldigvis med masse hjelpsomme ELF-headere og
+symboler. Dette gjør analysen mye enklere. Siden vi vet at `mykepakkervare.bin`
+er en litt modifisert versjon av den opprinnelige firmwaren, kan vi bruke
+informasjonen i headerne til å gjøre analysen av `mykepakkervare.bin` enklere.
+Vi vet at den har samme arkitektur, `ARM:LE:32:v8` i Ghidra, og at baseadressen
+er den samme, `0x08000000`. Med disse innstillingene kan vi også enkelt laste
+inn `mykepakkervare.bin` i Ghidra:
+
+![](./dag24/figures/mykepakkervare_ghirda_load.png)
+
+Vi har fortsatt ingen symboler, så jeg fant `main` og `command_handler` i
+`mykepakkervare.bin` og la inn de kjente symbolene ved å sammenlikne med
+`fastepakkervare.elf`. Alle screenshots videre er derfor av
+`mykepakkervare.bin`, men med symboler manuelt hentet fra `fastepakkervare.elf`.
+Etter litt arbeid ser `command_handler` slik ut:
+
+![](./dag24/figures/mykepakkervare_command_handler.png)
+
+For å få strengene til å vises i C-koden måtte jeg gå i "Memory View" og sette
+det definerte minneområdet til "RX", altså huke av "Write". 
+
+Hvis vi går litt tilbake til `main` er det en annen interessant funksjon, 
+`initial_config`. 
+
+![](./dag24/figures/mykepakkervare_main.png)
+
+Ser vi nærmere på den ser vi at override passordet blir skrevet til
+minneadressen `0x08010000`. 
+
+![](./dag24/figures/mykepakkervare_initial_config.png)
+
+Tilbake i `command_handler` ser vi at `dump_flash` kommandoen gir oss innholdet
+på den adressen, så det er her vi skal glitche. 
+
+La oss se på assemblyen til `dump_flash` if-setningen. Jeg har prøvd å legge inn
+mest mulig forklarende labels. 
+
+![](./dag24/figures/mykepakkervare_dump_flash_asm.png)
+
+Den markerte linjen (adresse `0x0800099e`) er den instruksjonen som tilsvarer
+if-setningen, og er den vi ønsker å skippe ved å glitche. Da vil koden fortsette
+til `flash_read` og passordet/flagget blir skrevet ut. 
+
+
+#### Finne rette parametere
+
+Som beskrevet i hjelpen bør man først finne en bredde som forårsaker glitch. Fra
+databladet vet vi at prosessoren kjører på 100 MHz og at alle instruksjoner
+bruker *nøyaktig* 2 klokkesykluser. Det betyr at én instruksjon kjører på 20 ns,
+så jeg prøver bredder rundt det. Finner at 27 ns fungerer bra, og bruker det
+resten av oppgaven. 
+
+Det er mer utfordrende å finne rett delay som glitcher på rett instruksjon.
+Fremgangsmåten som viste seg å fungere bra er som følger. 
+
+Vi bruker en form for binærsøk for å finne en delay som gjør at vi glitcher midt
+i outputten av `send_USART` funksjonen som printer error-meldingen. Det vis si
+at vi derfor ønsker deler av outputten i "før glitch" boksen og (deler av)
+resten i "full output" boksen. 
+
+![](./dag24/figures/glitch_too_late.png)
+
+Deretter kan vi backsteppe til vi kommer nært adressen til instruksjonen vi
+ønsker å glitche. Her må man prøve seg frem da det er fort gjort å havne inni en
+annen funksjon. Man vet derimot hvilke funksjoner som skal kalles nært
+instruksjonen vi skal glitche, så det er nokså enkelt å gjøre kvalifiserte gjett
+på hvor vi er og om vi skal ha kortere eller lenger delay. 
+
+![](./dag24/figures/glitch_close_to_correct_instruction.png)
+
+Vi er nå på adresse `0x0800098c` som er veldig nært, og fra her økte jeg delayen
+sakte til jeg fant en delay som fungerte. Jeg fant at `20 * 9525 ns` fungerte.
+Det kan være at det ikke går hver gang, eller at man må et par instruksjoner
+tidligere eller før, så her må man prøve seg frem. 
+
+![](./dag24/figures/glitch_successful.png)
+
+Nå har vi fått flagget! 
 
 
 ### Svar
@@ -1939,4 +2030,49 @@ TODO
 ### Egg
 
 `EGG{3rr0r! Unr34ch4bl3 c0d3 d373c73d!}`
+
+Når vi ser på pseudokoden der `get_egg` kalles ser vi at det er *to* betingelser
+i if-setningen.
+
+![](./day24/figures/egg_asm_and_pseudo.png)
+
+I assembly ser vi at dette tilsvarer to `cmp` og `bne` instruksjoner. Siden
+simulatoren/labben vi bruker kan glitche på flere tidspunkt, er det ikke mulig å
+glitche begge disse stedene. 
+
+Måten å gjøre det på er derfor å først finne ut at `get_egg` ligger rett bak
+`flash_write` i minnet, og deretter glitche retur-instruksjonen i `flash_write`
+for å fortsette inn i `get_egg`. Dette krevdes litt flaks å finne for min del. 
+
+![](./dag24/figures/egg_get_egg_after_flash_write.png)
+
+Vi at retur-instruksjonen `pop {...}` ligger på adresse `0x080016a2`, så dette
+er adressen vi sikter mot. 
+
+`flash_write` blir kalt som en del av `factory_reset` kommandoen. Vi skal derfor
+sende `factory_reset` til chippen og må finne en passende delay som gjør at vi
+glitcher rett instruksjon. 
+
+![](./dag24/figures/egg_factory_reset.png)
+
+Vi følger samme fremgangsmåte som for flagget. Vi vet derimot denne gangen at
+override passordet er flagget, så vi bruker det. Vi finner en delay som er for
+lang slik at vi er midt i en kjent streng, og kan backtracke fra der. 
+
+![](./dag24/figures/egg_too_late.png)
+
+Herfra gjelder det å finne en delay som gjør at vi glitcher inni `flash_write`
+funksjonen, og deretter øke litt etter litt til vi glitcher rett instruksjon.
+Jeg fant at `20 * 10514 ns` fungerte og ga flagget. 
+
+![](./dag24/figures/egg_successful.png)
+
+
+### Ikke egg
+
+Jeg synes `limb_control` funksjonen så interessant ut, og det var påfallende at
+det var 8 `cycle_pin` kall etterfulgt av et `usleep` kall. Jeg lagde scriptet
+[`limb-control.py`](./dag24/limb-control.py) for å se hva vi får. Det er derimot
+bare en melding som sier at dette ikke er et egg: `julegaveregg finner du et
+annet sted ;)nisseluer` (kjedelig :( )
 
