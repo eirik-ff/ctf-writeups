@@ -1296,8 +1296,19 @@ kodene etter de har merget. Da får vi flagget i kontaktmanualen.
 
 ### Egg
 
+`EGG{h3ng3r 0g d1ngl3r}`
+
 Hooken [`pre-commit`](./dag16/aksjon_2023/dot-git/hooks/pre-commit) hinter til
-at det finnes et egg i git-repoet. Jeg har derimot ikke klart å finne det. 
+at det finnes et egg i git-repoet: `Har noen sett egget mitt? Jeg vet HELT
+sikkert at jeg la det inn i git, men klarer ikke finne det igjen noe sted...`.
+Jeg skjønte ikke hva de hintet til, men etter å få tips på Discord var det visst
+en "dangling blob" som inneholdt egget. 
+
+Man kan få hashen til "dangling blobs" ved å kjøre `git fsck`. Da får vi hashen
+`fdfbb6ab8dda68e83853bf372a100e8ff6e8830f`. Innholdet i dangling bloben kan man
+se ved å kjøre `git show [hash]`, og ved å kjøre den kommandoen med hashen vår
+får vi flagget i en nydelig ASCII-art egg. Se full output i
+[`egg-full.txt`](./dag16/egg-full.txt)
 
 
 
