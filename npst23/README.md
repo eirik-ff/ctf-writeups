@@ -622,7 +622,134 @@ Vedlegg:
 
 ### Løsning
 
-TODO
+Vi får utlevert en Windows executable (`wuauclt.exe: PE32+ executable (GUI)
+x86-64, for MS Windows`) og et kryptert flagg-fil. Det krypterte flagget har en
+spesiell struktur, med masse hex-tall i starten etterfulgt av mange bytes.
+Windows-programmet er uten symboler og statisk linket med OpenSSL, så det er et
+mareritt å reverse. Jeg startet med å bruke Ghidra, men fikk tips om å bytte til
+IDA Free da det er mye bedre på Windows-filer. Resten av write-upen vil derfor
+bruke IDA. 
+
+Det er mange kaninhull og blindspor å havne i når man reverser denne binæren, og
+jeg kommer ikke til å skrive om alle disse. Alle strenger er også XOR-enkodet
+med `0x1337` og hver bokstav er 16-bit lang (det siste er visst en
+Windows-greie). Dette tok også ekstra lang tid å dekode alle strengene. Vit
+uansett at det tok mange, mange timer før jeg fant og forsto hva som var
+interessant for å løse oppgaven. Her kommer oppsummeringen av de timene. 
+
+Vi ønsker først å finne `main`. Selv om vi ikke har noen symboler, har vi
+fortsatt entry point, som IDA kaller `start`. Fra her kan vi gå inn i
+`__scrt_common_main_seh()`, og med litt kvalifisert gjetting og graving kan vi
+finne `main`. 
+
+`main` er lang og det er mye funksjonalitet å se på. Det blir heller ikke
+lettere av at OpenSSL er statisk linket inn og uten symboler, så det er mange
+funksjoner fra OpenSSL som kan se interessante ut, men som ikke er mulig å
+forstå. `main` består grovt sett av to deler/seksjoner, der den første er
+viktigst. Del 1 er den som er ansvarlig for å laste ned krypteringsnøkkelen og
+kryptere filer, mens del 2 kjører litt lokkefunksjoner som anti-debugging og
+sånn, samt funksjonen som spiller egget i morse, se egg under. Vi fokuserer
+derfor på del 1 videre.
+
+IDA klarer heldigvis å identifisere Windows-funksjoner, så det gjør analysen
+litt lettere. Den viktigste funksjonaliteten flyer omtrent som følger:
+
+1. Last ned (`GET` request) en RSA `.pem` nøkkelfil fra SPSTs web server. 
+    - Krever rett User Agent: `Polar Tech Inc. - Security Module
+    V.1.22474487139`
+    - URL:
+    `https://www.spst.no/midlertidig/60de5f4a2aacbe743fbd443199de7557/key.pem`
+    - Filen er ikke lenger tilgjengelig for nedlasting. 
+2. Sjekk om modulusen er primtall. 
+3. Iterer gjennom mappestrukturen. 
+4. Hvis filendelsen er `.viktig`, krypter filen, og skriv kryptert innhold og
+   modulus til en fil med endelse `.kryptert`.
+    1. Les inn filinnhold og filstørrelse
+    2. Krypter filen. Jeg *tror* de bruker OpenSSL sin
+       [`RSA_public_encrypt`](https://www.openssl.org/docs/man3.1/man3/RSA_public_encrypt.html)
+       her, signaturen stemmer i hvert fall greit, men jeg er ikke 100% sikker.
+    3. Slett opprinnelig fil
+    4. Lag RSA modulus om til en hexstring
+    5. Lag og åpne ny fil med `.kryptert` filendelse
+    6. Skriv data til fil
+        1. Modulus hexstreng
+        2. `\n\n`
+        3. Krypterte bytes
+
+Pseudokoden for main:
+
+![](./dag8/figures/main_download_and_is_prime.png)
+
+![](./dag8/figures/main_iterate_and_encrypt.png)
+
+Pseudokode for kryptering:
+
+![](./dag8/figures/encrypt_part1.png)
+
+![](./dag8/figures/encrypt_part2.png)
+
+Da jeg først hadde forstått dette forsto jeg ikke umiddelbart hvor sårbarheten
+lå, men det er en kritisk feil her. I RSA er modulusen `n = p * q` der `p` og
+`q` er primtall, *ikke* `n` selv. Siden de i steg 2 sjekker om `n` er primtall
+betyr det i praksis at `n = p * 1`, og det gjør RSA-likningene usikre. 
+
+Fra [RSA-likningene for
+kryptering](https://en.wikipedia.org/wiki/RSA_(cryptosystem)#Encryption) har vi
+at `m = (m^e)^d (mod n) = c^d (mod n)`. `e` er en del av public-nøkkelen, mens
+`d` er en del av privatnøkkelen. Når vi genererer nøklene regner vi ut `d` ved å
+finne modulær invers, altså `d = e^-1 (mod phi(n))` der `phi(n) = n - 1` når `n`
+er primtall ([Euler's totient
+function](https://en.wikipedia.org/wiki/Euler%27s_totient_function)). Modulær
+invers er definert som `e * d = 1 (mod n)`, altså det tallet man må gange `e`
+med for å få 1, modulo `n`. Verdien av `e` er ikke oppgitt, men det er veldig 
+vanlig å bruke `e = 2^16 + 1 = 65 537`, så vi gjetter på at det er den som er
+brukt her også. 
+
+Det er også verdt å merke at å bruke RSA-likningene direkte slik det er gjort
+her krever at meldingen er like lang som modulusen. Som en sanity check kan vi
+sjekke at dette stemmer. Jeg deler opp `flagg.kryptert` i `modulus.hex` og
+`ciphertext.bin`, og `wc -c` på hver fil gir at `ciphertext.bin` er 512 bytes og
+`modulus.hex` er 1024 bytes, men siden det er en hexstreng må vi dele på 2, så
+da stemmer det. 
+
+Jeg dekrypterer flagget i Python:
+
+[`solve.py`](./dag8/solve.py):
+```python
+from binascii import unhexlify
+
+modulus = unhexlify(open("modulus.hex", "r").read())
+modulus_int = int.from_bytes(modulus, "big")
+ciphertext = open("ciphertext.bin", "rb").read()
+ciphertext_int = int.from_bytes(ciphertext, "big")
+
+e = 2**16 + 1
+p = modulus_int
+d = pow(e, -1, p - 1)
+
+c = ciphertext_int
+message_int = pow(c, d, p)
+length = (message_int.bit_length() + 7 ) // 8
+message = message_int.to_bytes(length, "big")
+print(message.decode())
+```
+
+Modulær invers kan enkelt regnet ut med den innebygde `pow` funksjonen, og
+videre er det enkelt å regne ut plaintext med `pow` også. Konverterer til en
+streng og vi får flagget. 
+
+
+#### Nyttige ressurser 
+
+IDA har en genial funksjon som kalles FLIRT. Se mer
+[her](https://hex-rays.com/products/ida/tech/flirt/in_depth/) for en grundig
+forklaring på hvordan det fungerer. I korte trekk gjør det at vi kan lage
+signaturer på kjente biblioteksfunksjoner og bruke disse til å identifisere
+disse funksjonene når man reverser. Det er derimot en betalt funksjonalitet å
+lage sånne signaturfiler, så jeg var avhengig av å finne noen filer på nett. Jeg
+lette lenge på Google etter passende signaturfiler, og jeg fant til slutt noen
+som fungerte for noen av funksjonene, men den klarte ikke å identifisere alle.
+Det hjalp derimot litt, og ga litt mer innsikt i hva som skjedde noen steder. 
 
 
 ### Svar
