@@ -1,0 +1,3 @@
+hex_str1 = "a3c5a5a81ebc62c6144a9dc1ae5cce11"
+hex_str2 = "980daad49738f76b80c8fafb0673ff1b"
+hex_str3 = "fc78e6fee2138b798e1e51ed15e0a109"

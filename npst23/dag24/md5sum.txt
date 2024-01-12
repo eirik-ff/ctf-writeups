@@ -1,0 +1,3 @@
+afe8fbc2227df9f2483847006814a45c  datasheet.pdf
+7409fdaddb0e6ca7c7e1c62e381aa3cf  fastepakkervare.elf
+7327fe3e2a91327df16058a7454b1df9  mykepakkervare.bin
