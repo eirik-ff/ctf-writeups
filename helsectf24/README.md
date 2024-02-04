@@ -931,6 +931,8 @@ vi bygge opp samme ASCII-verdi som de lange summene over som vi sender inn i
 
 ## image processing 1 
 
+Flagg: `helsectf{krokodille}`
+
 ### Oppgave
 
 > fourier-transformasjoner kan brukes til mye innenfor bildeprosessering. man
@@ -950,7 +952,13 @@ vi bygge opp samme ASCII-verdi som de lange summene over som vi sender inn i
 > 
 > hva skjuler seg i dette bildet av et ekorn?
 
+Vedlegg:
+- [`ekorn.png`](./stego/image-processing-1/ekorn.png)
+
 ### Løsning
+
+Kopierer koden fra oppgaven og plotter spektrumet som et bilde. Det resulterende
+bildet [`flag.png`](./stego/image-processing-1/flag.png) viser flagget. 
 
 
 ## image processing 2 
