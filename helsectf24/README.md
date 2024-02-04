@@ -770,11 +770,16 @@ print(bytes(decoded).decode())
 
 ## Skalerbar vektorgrafikk
 
+Flagg: `helsectf{gjemt_flagg}`
+
 ### Oppgave
 
 > Flagget finnes i den vedlagte SVG-fila.
 
 ### Løsning
+
+I svg-koden er det en linje som skiller seg ut ved å ha definert
+`style="fill:#000"`. Ved å kommentere ut denne viser flagget seg. 
 
 
 ## tetris1
