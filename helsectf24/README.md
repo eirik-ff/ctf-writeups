@@ -890,6 +890,8 @@ print(*iter(open(repr(int()))))
 
 ## not cipher
 
+Flagg: `helsectf{lange_programmer_lever_lengst}`
+
 ### Oppgave
 
 > Utvikler Carl I. Pher trenger av og til å kjøre python-programmer på
@@ -905,6 +907,24 @@ print(*iter(open(repr(int()))))
 > `/lol/hemmeligmappe/flagg.txt`
 
 ### Løsning
+
+Her var trikset å bygge opp ASCII-verdiene for tegnene i filbanen til flagget.
+Dette kan vi gjøre ved å innse at `0^0 = 1`, og at vi kan få dette ved å kjøre
+`int()**int()`. Deretter kan vi summere sammen dette nok ganger til vi oppnår
+rett verdi, og deretter wrappe alt med `chr(...)`. Hver `chr(...)` kan vi legge
+sammen til en komplett streng, som vi så sender til samme payload som `null
+pointer`. Dette gir flagget for `not cipher`. 
+
+Mitt første utkast var på rundt 93 000 bytes, og alt for lang for `short not
+cipher` hvor vi har maks 5 000 bytes. Jeg har jobbet mye med å prøve å kutte ned
+på antall bytes, men kommer ikke under ~5 800. Forsøket mitt ligger i
+[`not-cipher/solve.py´](./misc/not-cipher/solve.py). Kortversjonen av hvordan
+det fungerer er som følger.
+
+Hvert ASCII-tegn har en hex-verdi `0xXY` som i base 10 betyr `X * 16 + Y`. Ved å
+definere korteste formulering for tallene 0-16 (`n0` til `n16` i scriptet) kan
+vi bygge opp samme ASCII-verdi som de lange summene over som vi sender inn i
+`chr(...)`. Dette gir god forbedring, men ikke nok. 
 
 
 # stego
