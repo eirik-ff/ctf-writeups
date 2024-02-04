@@ -960,6 +960,20 @@ Vedlegg:
 Kopierer koden fra oppgaven og plotter spektrumet som et bilde. Det resulterende
 bildet [`flag.png`](./stego/image-processing-1/flag.png) viser flagget. 
 
+```python
+import numpy as np
+import matplotlib.pyplot as plt
+
+img_data = plt.imread("./ekorn.png")
+ft = np.fft.fft2(img_data)
+fshift = np.fft.fftshift(ft)
+spectrum = np.log(np.abs(fshift))
+
+plt.figure()
+plt.imshow(spectrum)
+plt.savefig("flag.png")
+```
+
 
 ## image processing 2 
 
@@ -991,6 +1005,35 @@ Høypass-filter får frem kanter i bildet og tekst er laget av kanter, bruker je
 det. Jeg får ChatGPT til å gi meg koden for å regne ut høypass-filteret av et
 bilde, og prøver litt ulike verdier. Resultatet ser du i
 [`flag.png`](./stego/image-processing-2/flag.png), hvor vi ser flagget. 
+
+```python
+import numpy as np
+import matplotlib.pyplot as plt
+from scipy.fft import fft2, ifft2, fftshift, ifftshift
+
+# Thanks ChatGPT
+def high_pass_filter_image(image, cutoff_frequency):
+    fft_result = fft2(image)
+    fft_shifted = fftshift(fft_result)
+    rows, cols = image.shape
+    mask = np.zeros((rows, cols))
+    center = (rows // 2, cols // 2)
+    x, y = np.ogrid[:rows, :cols]
+    mask_area = (x - center[0]) ** 2 + (y - center[1]) ** 2 >= (cutoff_frequency ** 2)
+    mask[mask_area] = 1
+    fft_filtered = fft_shifted * mask
+    filtered_image = ifft2(ifftshift(fft_filtered))
+
+    return np.abs(np.array(filtered_image))
+
+
+img_data = plt.imread("./blabr.png")
+processed = high_pass_filter_image(img_data, 15)
+
+plt.figure()
+plt.imshow(processed)
+plt.savefig("flag.png")
+```
 
 
 ## prikker
