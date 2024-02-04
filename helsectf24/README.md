@@ -45,6 +45,8 @@ o + 311713 + 5 = 4*o + 20
 
 ## reisetid
 
+Flagg: `helsectf{1415_112500}`
+
 ### Oppgave
 
 > Kari og Ola bor 150km fra hverandre og skal møtes for å ta en kaffe. Kari
@@ -61,6 +63,27 @@ o + 311713 + 5 = 4*o + 20
 > leverer når du har riktig svar.
 
 ### Løsning
+
+Gjør teksten om til et likningsett og løser for posisjon. Vi setter kl 12:00 som
+nullpunkt, altså `t_0 = 12:00`, så Kari starter å kjøre på `t = 0`, mens Ola
+starter å kjøre på `t = 1`. Videre ved vi at Kari har en snittfart på `v_k = 50
+km/h` mens Ola har en snittfart på `v_o = 30 km/h`. Posisjonene deres på tid `t`
+er gitt ved likningene
+
+```
+(1) s_k = v_k * t
+(2) s_o = 150 - v_o * (t - 1)
+```
+
+Hvis vi sett dem lik hverandre og løser for `t` får vi at de møtes ved `t =
+2.25` timer, altså etter **2 timer og 15 minutter**, altså kl 14:15. Vi finner
+så at Kari har kjørt
+
+```
+s_k = 50 km/h * 2.25 h = 112.5 km = 112 500 m
+```
+
+så da har vi alle delene av flagget.
 
 
 ## Larsw sekvens
