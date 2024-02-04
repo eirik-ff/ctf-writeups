@@ -275,13 +275,63 @@ innholdet i minnet der `RSI` peker, og dermed får vi flagget.
 
 ## StateOfGo
 
+Flagg: `helsectf{redeclaring_a_Go_variable_can_shadow_another!}`
+
 ### Oppgave
 
 > Mitt Go-program kompilerer fint, men viser ikke flagget? Jeg som trodde Go
 > aldri kunne gjøre noe feil!? Se om det hjelper å overskrive en byte på
 > vilkårlig offset.
 
+Vedlegg:
+- [`server.py`](./rev/StateOfGo/server.py)
+
 ### Løsning
+
+Vi får se en Go-kode som vi kan redigere ett tegn i og så kjøre koden. Full
+kildekode til Go-progammet er:
+
+```go
+package main
+
+import (
+		"fmt"
+		"os"
+)
+
+type N struct {
+		data string
+		i	 int
+}
+
+func (n N) get() string {
+		return string(n.data[n.i])
+}
+
+func main() {
+		flag, _ := os.ReadFile("flag.txt")
+		n := N{string(flag), -1}
+		t := func(n N) N {
+				n.i += 1
+				return n
+		}
+		for i := 0; i < len(n.data); i++ {
+				n := t(n)
+				fmt.Print(n.get())
+		}
+		fmt.Println()
+}
+```
+
+Poenget her er å finne ut at det er forskjell mellom `:=` og `=`, der
+førstnevnte deklarerer en ny variabel, mens sistnevnte tilegner en verdi til en
+allerede definert variabel. Problemet er her at hver gang `n := t(n)` kjøres,
+overskrives variabelen så vi mister informasjon. Vi ønsker derfor å endre `:=`
+til `=` ved å skrive et mellomrom over kolonet.
+
+Med litt prøving og feiling finner jeg at en offset på 299 bytes er rett. Ved å
+overskrive `:` med et mellomrom fungerer programmet som planlagt, og vi får
+skrevet ut flagget. 
 
 
 ## Seksjoneringsavdelingsdirektør Gustavsen
