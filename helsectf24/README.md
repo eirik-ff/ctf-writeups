@@ -336,11 +336,37 @@ skrevet ut flagget.
 
 ## Seksjoneringsavdelingsdirektør Gustavsen
 
+Flagg: `helsectf{eg_er_i_ein_seksjon_hr_Gustavsen}`
+
 ### Oppgave
 
 > De jobber i feil seksjon, hr. Gustavsen!
 
+Vedlegg:
+- [`gustavsen`](./rev/Seksjoneringsavdelingsdirektør-Gustavsen/gustavsen)
+
 ### Løsning
+
+Åpner først i Ghidra, men får feilmelding om at DWARF 5 ikke støttes. Åpner
+derfor i IDA Free i stedet. IDA gir også finere disassembly, med mer info.
+
+Jeg åpnet først binærfilen i Ghidra, men får en feilmelding om at DWARF 5 ikke
+støttes, så jeg går for IDA Free i stedet. IDA gir forøvrig mer forståelig
+disassembly som gjorde arbeidet lettere. 
+
+Jeg leser gjennom koden og finner at den looper gjennom alle
+ELF-seksjon-headerene og ser om den starter med den magiske verdien `EEFEAAFA`.
+Dette er det eneste stedet noe skrives ut til skjermen, så det må være dette vi
+finner flagget. Etter litt leting og debugging med GDB finner jeg at seksjonen
+`.pewpew` starter med den rette magiske verdien. Problemet er at programmet
+slutter etter å ha lest en slik seksjon, og hvis det kommer flere seksjoner
+etter denne blir de ikke lest. 
+
+Jeg søker etter den magiske verdien i hex view og ser jeg at en seksjon med
+akkurat samme magiske verdi kommer rett etter `.pewpew`. Fra `readelf -S` ser
+jeg at denne har navnet `.symdata`. Her ligger antakelig flagget, så jeg patcher
+binærfilen med `hexedit` så `.pewpew` ikke lenger har rett magiske verdi, og da
+får jeg printet flagget.
 
 
 ## debug_rat
