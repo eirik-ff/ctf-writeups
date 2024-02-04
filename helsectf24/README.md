@@ -680,6 +680,9 @@ og dekoder base64-strengen som ligger der.
 
 ## Claim_in_mail
 
+Flagg:
+`helsectf{if_it_qaks_like_a_bot_6ebd7e86fa5a82fb062800f9529fede402ab4b758453ee1456197754ca051145}`
+
 ### Oppgave
 
 > Du har fått en e-post med et html-vedlegg. Det er vel bare å åpne det?
@@ -689,7 +692,63 @@ og dekoder base64-strengen som ligger der.
 > 
 > I god stil er oppgavefilen pakket i en kryptert zip. (passord infected)
 
+Vedlegg:
+- [`Oppgave.zip`](./maldoc/claim_in_mail/Oppgave.zip)
+    - [`Claim_3456.html`](./maldoc/claim_in_mail/Claim_3456.html)
+
 ### Løsning
+
+Her får vi utlevert en html-fil som er starten på en kjede med mange lag som
+ender i en .NET-fil som inneholder flagget. Under er en kort beskrivelse av
+hvert lag.
+
+1. HTML-filen inneholder base64-enkodet data av en SVG-fil. Kopierer
+   base64-dataen til
+   [`stage1/section.svg.b64`](./maldoc/claim_in_mail/stage1/section.svg.b64) og
+   gjør den om til et svg-bilde. 
+2. I svg-bildet er det embeddet noe JavaScript jeg kopierer til
+   [`stage1/svg-embedded.js`](./maldoc/claim_in_mail/stage1/svg-embedded.js).
+   Jeg rydder opp i denne og fjerner `window.location.assing` kallet. Dette
+   gir en zip
+   [`stage2/svg-embedded-output.zip`](./maldoc/claim_in_mail/stage2/svg-embedded-output.zip).
+   I zip-filen ligger [`stage2/Claim_3456.vhd`]. 
+3. VHD-filen er en virutell harddisk som kan mountes med `mount -o
+   loop,offset=$((128*512)) ./Claim_3456.vhd ./Claim_3456`. Merk at dette ikke
+   fungerer på WSL, men det fungerer på en Linux-VM i VirtualBox. Offsetten
+   kommer av at hver sektor har størrelse 512 bytes, og første filsystem starter
+   i 128. sektor (info fra `fdisk -l ./Claim_3456.vhd`). 
+4. Filsystemet [`stage4/Claim_3456/`](./maldoc/claim_in_mail/stage4/Claim_3456/)
+   har en `.lnk` fil som vi kan lese med scriptet
+   [`lslnk.pl`](./maldoc/claim_in_mail/lslnk.pl). Da finner vi at den kjører
+   scriptet
+   [`respondents/ibidem.cmd`](./maldoc/claim_in_mail/stage4/Claim_3456/respondents/ibidem.cmd) 
+   som igjen starter
+   [`respondents/suspect.cmd`](./maldoc/claim_in_mail/stage4/Claim_3456/respondents/suspect.cmd) 
+   som kjører `start crossbar.tmp run`. Jeg brukte en del tid på å prøve å
+   reversere denne i Ghidra, men uten så mye fremgang. Jeg så flere steder
+   referanser til `StringLibrary.dll` og konkluderte med at `crossbar.tmp` er en
+   exe som kjører kode fra denne DLLen. 
+5. Jeg åpner
+   [`StringLibrary.dll`](./maldoc/claim_in_mail/stage4/Claim_3456/respondents/StringLibrary.dll)
+   i [ILSpy](https://github.com/icsharpcode/ILSpy) og finner en funksjon
+   `b64_decode`. Denne kjører først en base64 decode og deretter en
+   XOR-dekryptering. Jeg skriver et Python-script som gjør det samme, og får
+   endelig flagget.
+
+```python
+from base64 import b64decode
+
+b64_str = "DAEIFwEHEAIfDQI7DRA7FQUPFzsIDQ8BOwU7BgsQO1IBBgBTAVxSAgVRBVxWAgZUUlZcVFQCXVFWXQIBAAFQVFYFBlAGU1FcUFFXAQFVUFFSVV1TU1FQBwVUUVVVUFEZ"
+
+decoded = bytearray(b64decode(b64_str))
+num = 5
+num = (num * 2686 + 1432990190) % 256
+
+for i in range(len(decoded)):
+    decoded[i] ^= num
+
+print(bytes(decoded).decode())
+```
 
 
 ## Pass or fail?
