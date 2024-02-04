@@ -88,6 +88,8 @@ så da har vi alle delene av flagget.
 
 ## Larsw sekvens
 
+Flagg: `helsectf{0mG!__deBruiJn!}`
+
 ### Oppgave
 
 > Vi har fanget opp en spesiell sekvens
@@ -125,6 +127,30 @@ så da har vi alle delene av flagget.
 
 ### Løsning
 
+Nicolaas Govert de Bruijn er kjent for [de Bruijn
+sekvenser](https://www.baeldung.com/cs/de-bruijn-sequence) som har alle mulige
+substrenger inni seg. Den lange sekvensen ser ut til å være en de Bruijn
+sekvens. Vi kan finne `AjAA` i den, så da er det rimelig å tro at hver korte
+streng er et tegn i flagget. Det viser seg at `AjAA` starter på indeks 104 som
+tilsvarer ASCII `h`. Med denne kunnskapet kan vi lage følgende solve script:
+
+```python
+de_bruijn = \
+"AAABAACAADAAEAAFAAGAAHAAIAAJAAKAALAAMAANAAOAAPAAQAARAASAATAAUAAVAAWAAXAAYAAZAAaAAbAAcAAdAAeAAfAAgAAhAAiAAjAAkAAlAAmAAnAAoAApAAqAA"
+
+seq_list = [ "AjAA", "AiAA", "kAAl", "AAnA", "AiAA", "hAAi", "AnAA", "iAAj",
+            "pAAq", "QAAR", "AAlA", "AYAA", "LAAM", "AgAA", "AgAA", "AAiA",
+            "AiAA", "WAAX", "mAAn", "nAAo", "jAAk", "AZAA", "AlAA", "LAAM",
+            "AqAA"]
+
+flag = []
+for seq in seq_list:
+    i = de_bruijn.find(seq)
+    flag.append(i)
+
+flag = "".join(chr(i) for i in flag)
+print(flag)
+```
 
 ## joppe1
 
