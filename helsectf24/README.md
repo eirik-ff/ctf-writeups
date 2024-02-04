@@ -1038,12 +1038,55 @@ plt.savefig("flag.png")
 
 ## prikker
 
+Flagg: `helsectf{en_prikk_kan_ha_mange_farger!}`
+
 ### Oppgave
 
 > En TV skjerm har klikket helt og viser bare prikker i ulike farger. Hvis man
 > ser godt etter kan man kanskje se en hemmelig melding, spesielt hvis man
 > finner den riktige fargen!
 
+Vedlegg:
+- [`prikker.zip`](./stego/prikker/prikker.zip)
+    - [`prikker.gif`](./stego/prikker/prikker.gif)
+
 ### Løsning
 
+Gifen vi får utlevert viser 4000 frames på 0.01 sekund. Når jeg åpner den ser
+jeg mange prikker i ulike farger blinke på skjermen. Basert på oppgaveteksten
+mistenker jeg at prikkene staver flagget. 
+
+Jeg ser at de rød prikkene er minst, og gjetter på at det er disse prikkene jeg
+er interessert i. Jeg skriver et Python-script som finner alle frames med røde
+prikker og legger dem sammen:
+
+```python
+import numpy as np
+import matplotlib.pyplot as plt
+from PIL import Image, ImageSequence
+
+gif_path = "./prikker.gif"
+
+plt.figure(figsize=(10, 2))
+
+target_color = [139, 0, 0]
+
+accum = np.array([])
+with Image.open(gif_path) as gif:
+    for frame_number, frame in enumerate(ImageSequence.Iterator(gif)):
+        frame = np.array(frame)
+        if frame_number == 0:
+            accum = np.zeros((*frame.shape, 3), dtype=frame.dtype)
+            continue
+
+        include = all(c in frame[:, :, i] for i, c in enumerate(target_color))
+        if include:
+            accum = accum + frame
+
+plt.imshow(accum)
+plt.title("Flag")
+plt.savefig("flag.png")
+```
+
+Det resulterende bildet [`flag.png`](./stego/prikker/flag.png) viser flagget. 
 
