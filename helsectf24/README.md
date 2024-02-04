@@ -753,6 +753,8 @@ print(bytes(decoded).decode())
 
 ## Pass or fail?
 
+Flagg: `helsectf{this_2_shall_pass}`
+
 ### Oppgave
 
 > .bat - filer kan gjøre ganske mye. Denne bat-filen vil ikke kjøre noe skummelt
@@ -763,7 +765,64 @@ print(bytes(decoded).decode())
 > 
 > Passord for zip-fil er standard (infected).
 
+Vedlegg: 
+- [`pass_or_fail.zip`](./maldoc/pass_or_fail/pass_or_fail.zip)
+    - [`pass_or_fail.bat`](./maldoc/pass_or_fail/pass_or_fail.bat)
+
 ### Løsning
+
+Bat-filen er obfuscated med masse rare tegn og variabel-substitusjoner. Jeg
+begynte å manuelt løse opp substitusjonene, men det var tungvint arbeid. Jeg
+visste heller ikke hva `public` variabelen var satt til. Jeg endte med å bare
+kjøre .bat filen i stedet. Første linje ser vi åpenbart er `@echo off`, så denne
+kommenterte jeg ut for at kommandoene skulle skrives til skjermen. Et triks vi
+kan bruke for å skrive ut alle kommandoene uten å kjøre dem er å legge til `rem`
+foran hver linje. Da vil den løse opp alle substitusjonene, men ikke kjøre
+kommandoene. For at det skal fungere, må vi først gjøre alle de kinesiske
+tegnene om til vanlig ASCII. Dette gjør jeg manuelt med Search and Replace. Jeg
+vet også at bat-filen leser inn et argument, så etter å ha renset litt opp
+kjører jeg `pass_or_fail.bat ARG1`.
+
+```dosbatch
+@echo off
+set "a=wrUnsT7NBeCfiljYRb5cPF2oQ8SWZzG@VJpvXxO6K3HI LadgAqDmu14h=MEkty09"
+@set "b=Kt@4oE2uzLIZ80qiR1YpOldD SjNe7bWskfvUMCwVBnrGgFHamPJhxXAyQ536c9=T"
+@set "c=ybVIQN=SoEOikuHCcfao LhB3KUA6rzXxY0Dw7nJg4sM9tjG85d1ZqePlWRv@FTpm"
+@set "d=NaY35kTOpHZ@oE0hI=yrxjm SUbKF6eiCW7R9fslt8wJuzdoDLA1Gv4nQgMXVPcBq"
+@set "e=RzxkNpCdKhS3@oefquTcowElvU8W9rLHVa 6AZDG7Q0Yy5JijnFO4MPbgXmBtI1s="
+for /l %y in (1,1,1) do @echo off
+if 1 EQU 1 set "abco=https://youtu.be/YZf0Q-v3u-k?feature=6e65697468657oo069732074686973"
+for /l %y in (1,1,1) do set "abc3=https://youtu.be/3xYXUeSmb-Y?feature=54686973o06973206e6f74o0746865o0666c6167"
+if 46 EQU 0 (@exit) else set "abc4=G@nd@lf"
+if 1 EQU 1 set "abc1=https://youtu.be/qybUFnY7Y8w?feature="
+if 1 LsS 109 set "abc7=explorer.exe"
+if 1 EQU 1 if not "ARG1" equ "" goto usage
+for /l %y in (1,1,1) do goto end
+:usag^e  lli^iliiilil   l^lililllili
+if 1 LsS 109 set "abc5=68656c73656374667b746869"
+if 1 LsS 109 if ARG1==G@nd@lf (set "abc6=735f3o5f7368616c6c5f706173737d"
+if 1 LsS 109 set "abc7=https://youtu.be/qybUFnY7Y8w?feature=68656c73656374667b746869735f3o5f7368616c6c5f706173737d"
+) else (start )
+if 1 LsS 109 start explorer.exe
+if 1 LsS 109 exit
+:en^d  lilll^illill   liillllll^il
+for /l %y in (1,1,1) do start https://youtu.be/3xYXUeSmb-Y?feature=54686973o06973o06e6f74o0746865o0666c6167
+```
+
+Vi ser flere YouTube-linker, og noe som likner på hex-enkodet ASCII etter
+`?feature=` i URLene. Det er derimot en `o` (liten O) flere steder i strengene
+så de er ikke direkte konverterbare enda.
+
+Hvis vi ser på `54686973o06973o06e6f74o0746865o0666c6167` og sletter `o0`-ene,
+får vi `Thisisnottheflag`. Det tyder på at `o0` burde være `20` (altså
+mellomrom), så da antar jeg at `o = 2`.
+
+Tar vi den andre hex-strengen og endrer `o` til 2, får vi flagget:
+
+```python
+>>> binascii.unhexlify("68656c73656374667b746869735f3o5f7368616c6c5f706173737d".replace("o","2"))
+b'helsectf{this_2_shall_pass}'
+```
 
 
 # misc
