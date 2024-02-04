@@ -613,6 +613,8 @@ får jeg printet flagget.
 
 ## debug_rat
 
+Flagg: `helsectf{r3meMber_Netbus_aNd_BackOrifice???}`
+
 ### Oppgave
 
 > En god RAT går aldri av moten! Vi har deployet en test, men glemte å slå av
@@ -627,6 +629,12 @@ får jeg printet flagget.
 > PS! Binarien er en fult fungerende Remote Access Trojan som gir Remote Code
 > Execution. I god stil er derfor oppgavefilen pakket i en kryptert zip.
 > (passord: infected)
+
+Vedlegg:
+- [`debug_rat.zip`](./rev/debug_rat/debug_rat.zip)
+    - [`debug_rat`](./rev/debug_rat/debug_rat)
+    - [`Dockerfile`](./rev/debug_rat/Dockerfile)
+    - [`Makefile`](./rev/debug_rat/Makefile)
 
 ### Løsning
 
