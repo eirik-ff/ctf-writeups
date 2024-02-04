@@ -171,6 +171,55 @@ Flagg: `helsectf{l3nGe_s1D3n_f01k_progaMMeR7e_i_Fortran_90}`
 
 ### Løsning
 
+Jeg åpner binærfilen i Ghidra og går til `main`-funksjonen:
+
+![](./rev/babyrev_fortran/figures/main.png)
+
+Funksjoner med prefiksen `_gfortran` er innebygde funksjoner for
+standard-funksjoner i Fortran (f.eks. `WRITE`). Fra det jeg klarte å forstå må
+Fortran først starte skriving (`st_write`) for så å overføre bytene som skal
+skrives til skjermen (`transfer_character_write`), for å til slutt stoppes
+(`st_write_done`). 
+
+Går vi inn i funksjonen jeg har døpt `load_flag_into_buffer_and_maybe_decrypt`
+ser vi:
+
+![](./rev/babyrev_fortran/figures/load_flag_into_buffer_and_maybe_decrypt.png)
+
+Den kopierer flagget fra en global variabel `__a_MOD_flag`, og basert på siste
+argument kjører den noe mer kode. Går vi videre inn i `decrypt_flag_buffer` ser
+vi:
+
+![](./rev/babyrev_fortran/figures/decrypt_flag_buffer.png)
+
+Funksjonen looper gjennom flagget og dekoder/dekrypterer det på linje 26-28. Jeg
+prøvde først å lage en Python-script som gjorde samme dekoding, men fikk det
+ikke til å fungere. 
+
+Derfor løste jeg oppgaven dynamisk. Jeg åpnet binæren i GDB og satt en
+breakpoint på if-setningen i `load_flag_info_buffer_any_maybe_decrypt`. Ved å
+manuelt skippe instruskjonen for if-setningen fikk jeg kjørt
+`decrypt_flag_buffer`, men her hang programmet seg. 
+
+Min teori for hvorfor dette skjer er at `st_write` ble først kjørt i `main`, og
+deretter igjen i `decrypt_flag_buffer` *uten* at `st_write_done` blir kjørt
+først. I GDB så jeg at programmet henger fordi det venter på en mutex. 
+
+Løsningen min ble å patche binæren med `hexedit` til å ikke kjøre `st_write` i
+`main` ved å erstatte `call` instruksjonen med `nop` (`0x90`). Assembly-koden
+gikk fra
+
+![](./rev/babyrev_fortran/figures/before_patch.png)
+
+til
+
+![](./rev/babyrev_fortran/figures/after_patch.png)
+
+Merk at adressene er de samme. Jeg gjorde samme patch med if-setningen. 
+
+Når jeg nå kjører binærfilen blir flagget skrevet ut. Programmet får segfault,
+men det skjer etter at flagget blir skrevet ut så det betyr ikke noe her. 
+
 
 ## babyrev_rust 
 
