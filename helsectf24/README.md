@@ -851,6 +851,8 @@ terminalen.
 
 ## null pointer
 
+Flagg: `helsectf{z3r0_p0inters_g1ven}`
+
 ### Oppgave
 
 > Utvikler Per Ointer trenger av og til å kjøre python-programmer på webserveren
@@ -866,6 +868,24 @@ terminalen.
 > i current directory.
 
 ### Løsning
+
+Etter lang stirring på [built-ins i
+Python](https://docs.python.org/3/library/functions.html), samt mye prøving og
+feiling, fant jeg til slutt frem til noe som fungerte.
+
+Vi trenger strengen `'0'` for å åpne filen med det navnet. `int()` gir tallet
+`0`, og med `repr(int())` for vi den ønskede strengen `'0'`.
+
+Vi kan så åpne filen `open('0')`. Fil-objekter kan itereres over i Python, og
+`iter` hjelper oss der. `iter` returnerer derimot et iterator-objekt, så for å
+gå gjennom generatoren kan vi bruke `*` for å "unpacke" iteratoren. Altså, vi
+kjører `*iter(open('0'))`. Dette printer vi med `print`.
+
+Det betyr at fullstendig program er:
+
+```python
+print(*iter(open(repr(int()))))
+```
 
 
 ## not cipher
