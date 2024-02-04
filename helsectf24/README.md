@@ -656,6 +656,8 @@ lete etter VBA-makroer. Da dukker flagget opp som en variabel i en funksjon.
 
 ## hidden
 
+Flagg: `helsectf{usynlig_ark!}`
+
 ### Oppgave
 
 > Enda et Excel-ark! Men denne gangen fant vi ingen macroer... Men hvor er
@@ -663,7 +665,17 @@ lete etter VBA-makroer. Da dukker flagget opp som en variabel i en funksjon.
 > 
 > I god stil er oppgavefilen pakket i en kryptert zip. (passord infected)
 
+Vedlegg:
+- [`hidden.zip`](./maldoc/hidden/hidden.zip)
+    - [`hidden.xlsm`](./maldoc/hidden/hidden.xlsm)
+
 ### Løsning
+
+Her er det ingen makroer, så jeg åpner dokumentet i OpenOffice Calc. Det er
+ingen åpenbare steder flagget er, men etter hvert finner jeg et skjult ark
+"Sheet 1337". Jeg åpner det ved å navigere til `Format > Sheet > Hide`
+[<sup>kilde</sup>](https://forum.openoffice.org/en/forum/viewtopic.php?t=90945)
+og dekoder base64-strengen som ligger der. 
 
 
 ## Claim_in_mail
