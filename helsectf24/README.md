@@ -963,6 +963,8 @@ bildet [`flag.png`](./stego/image-processing-1/flag.png) viser flagget.
 
 ## image processing 2 
 
+Flagg: `helsectf{pepperoni}`
+
 ### Oppgave
 
 > fourier-transformasjonen til et bilde kan brukes til mye nyttig, blant annet
@@ -980,7 +982,15 @@ bildet [`flag.png`](./stego/image-processing-1/flag.png) viser flagget.
 > 
 > tips! prøv gjerne litt forskjellige masker med forskjellige verdier.
 
+Vedlegg:
+- [`blabr.png`](./stego/image-processing-2/blabr.png)
+
 ### Løsning
+
+Høypass-filter får frem kanter i bildet og tekst er laget av kanter, bruker jeg
+det. Jeg får ChatGPT til å gi meg koden for å regne ut høypass-filteret av et
+bilde, og prøver litt ulike verdier. Resultatet ser du i
+[`flag.png`](./stego/image-processing-2/flag.png), hvor vi ser flagget. 
 
 
 ## prikker
