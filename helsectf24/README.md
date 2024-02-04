@@ -303,7 +303,35 @@ print(long_to_bytes(joppe2).decode())
 > Igjen er det ganske store tall, presisjonen må opp og Adi har igjen glemt å
 > bruke modulo her.
 
-### Løsning
+### Notater
+
+Jeg klarte ikke å løse denne. Under er løsningen på alle gåtene samt
+hemmelighetene: 
+
+1. Hva er det dine barn må gi deg som du ikke kan få selv?
+    - Svar: barnebarn
+    - Hemmelighet: `(2344332245,
+      65530548079400370318528292311996782073761367365025193477153)`
+2. Noen måneder har 30 dager og noen har 31 dager. Hvor mange måneder har 28
+dager?
+    - Svar: alle
+    - Hemmelighet: `(13429121073,
+      362422730191176971056722614457277134831341186224587467857920)`
+3. Du kommer til en kald vinterhytte og oppdager at du kun har en fyrstikk. I
+   hytta er det en peis, en parafinlampe og ett stearinlys. Hva tenner du først?
+    - Svar: fyrstikken
+    - Hemmelighet: `(3429121073,
+      95529569869860840087763619573109073266430740016361100443349)`
+4. Livet mitt kan måles i timer, jeg tjener ved å bli slukt. Tynn, jeg er rask.
+   Feit, jeg er treg. Vind er min fiende. Hva er jeg?
+    - stearinlys
+    - Hemmelighet: `(23429121073,
+      611905828855656382575774271667026570700762200408325616089780)`
+5. De har ikke kjøtt, fjær eller bein. Likevel har de fingre og tommel. Hva er
+   de?
+    - Svar: hansker
+    - Hemmelighet: `(267429121073,
+      1304263530048391400503348909036069075396369750743127072608747)`
 
 
 ## Kontraktsignering
