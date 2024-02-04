@@ -9,6 +9,8 @@ TODO
 
 ## alder
 
+Flagg: `helsectf{4178279_1044566}`
+
 ### Oppgave
 
 > Kari og Ola er to gamle vampyrer.
@@ -23,6 +25,22 @@ TODO
 > leverer når du har riktig svar.
 
 ### Løsning
+
+Setter opp likningsett og løser for de to ukjente. La `k` og `o` være alderen
+til hhv. Kari og Ola i dag. Teksten skrives derfor som følgende likninger, og
+løses.
+
+```
+(1) k = o + 3133713
+(2) k + 5 = 4*(o + 5)
+
+(1)->(2)
+o + 311713 + 5 = 4*o + 20
+3*o = 3133698
+
+=> o = 1044566
+=> k = 1044566 + 3133713 = 4178279
+```
 
 
 ## reisetid
