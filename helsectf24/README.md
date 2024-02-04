@@ -779,15 +779,24 @@ print(bytes(decoded).decode())
 
 ## tetris1
 
+Flagg: `helsectf{tetromino}`
+
 ### Oppgave
 
 > I denne runden av HelseCTF har vi laget vårt eget tetris-spill. Spill tetris
 > til du har fått rydda bort totalt fem linjer.
 
+Vedlegg:
+- [`tetris.html`](./misc/tetris/tetris.html)
+
 ### Løsning
+
+Spiller bare Tetris til jeg rydder 5 linjer. 
 
 
 ## tetris2
+
+Flagg: `helsectf{meisebolle}`
 
 ### Oppgave
 
@@ -797,8 +806,15 @@ print(bytes(decoded).decode())
 
 ### Løsning
 
+Ser at pil opp ikke er listet som en tast man kan bruke. Litt tilfelding finner
+jeg at hvis man trykker inn pil opp nært bunn går tetrominoen opp en linje. Hvis
+man fortsetter å holde inne går tetrominoen helt opp og ut av brettet. Da dukker
+flagget opp.
+
 
 ## tetris3 
+
+Flagg: `helsectf{himmelferd}`
 
 ### Oppgave
 
@@ -806,14 +822,44 @@ print(bytes(decoded).decode())
 
 ### Løsning
 
+Jeg har tatt ut JavaScript-koden fra HTML-filen til en egen fil og beautifyet
+den, se [`tetris.js`](./misc/tetris/tetris.js).  
+
+I `drawFrame` funksjonen er det separate funksjoner for å tegne himmel, terreng,
+brett, og fugler. Siden vi skal lete "nede i horisonten, under fjell, snø og
+terreng", kommenterer jeg bort `drawTerrain` og flagget dukker opp.
+
 
 ## tetris4
+
+Flagg: `helsectf{nocheat}`
 
 ### Oppgave
 
 > Spill til du har fått renska 5000 linjer på brettet.
 
 ### Løsning
+
+Hvis man prøver å naivt sette antall linjer til mer enn 5000 får vi opp en sint
+ugle som sier "CHEATER". Denne dukker opp når `currentMode` ikke er en av de
+forhåndsdefinerte verdiene, se `keyPressed`. Et par steder i koden settes
+`currentMode = "CHEATER!"`, men det viser seg at flere steder i koden settes
+variabelen også til kun *en* bokstav. Siden cheater vinduet dukker opp hvis
+`currentMode` ikke er en av de vanlige veridene, betyr det at der `currentMode`
+settes til noe uvanlig fungerer som en slags anti-cheat. Det er tre steder hvor
+dette skjer, og de tre betingelsene er oppsummert som følger
+
+```js
+3 * nTetros < state[0]
+3 * nTetros < lines
+Math.abs(lines - state[0]) > 30
+```
+
+`state[0]` og `lines` er hvor mange linjer vi har fjernet, mens `nTetros` er
+hvor mange tetrominos som har blitt spilt (tror jeg). For å bekjempe
+anti-cheaten må vi regne ut fornuftige verdier av disse tre variablene. Hvis vi
+setter `state[0] = lines = 5001` må `nTetros = 1667`. Jeg definerer disse
+verdiene i toppen av filen, og flagget dukker opp når siden lastes.
 
 
 ## bombzip2
