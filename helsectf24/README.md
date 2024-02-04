@@ -154,6 +154,8 @@ print(flag)
 
 ## joppe1
 
+Flagg: `helsectf{ved_x_null_er_alt_gull}`
+
 ### Oppgave
 
 > Redd Joppe, død eller levende!
@@ -172,6 +174,31 @@ print(flag)
 > Om du bruker du Adis metode eller ikke så finner du koden på null.
 
 ### Løsning
+
+Vi kobler til URLen og blir bedt om å løse noen gåter. 
+
+1. De fattige har det, de rike trenger det, og hvis du spiser det, dør du. Hva
+   er det?
+    - Svar: ingenting
+    - Hemmelighet: `(-500, 1229)`
+2. En bussjåfør kom nedover en gate. Han suste rett forbi et stoppskilt, uten å
+   stoppe. Han tok til venstre der det var innkjøring forbudt. Han passerte en
+   politibil på feil side av gata. Likevel brøt han ikke en eneste
+   trafikkregel. Hvordan kunne det ha seg?
+    - Svar: ???
+3. Hva blir våtere jo mer den tørker?
+    - Svar: håndkle
+    - Hemmelighet: `(1000, 2729)`
+
+Googler Adi Shamir og finner [Shamir's secret
+sharing](https://en.wikipedia.org/wiki/Shamir%27s_secret_sharing). Wikipedia har
+et bra eksempel på rekonstruksjon, så jeg følger samme fremgangsmåte med
+hemmelighetene over, og finner at koden er `1729`. Når jeg sender det inn får
+jeg flagget. 
+
+Etter å ha løst `joppe2` hadde jeg skrevet kode for å løse Shamir's Secret
+Sharing, så jeg tilpasset koden til `joppe1`. Se
+[`joppe1/solve.py`](./matte_og_krypto/joppe1/solve.py). 
 
 
 ## joppe2
