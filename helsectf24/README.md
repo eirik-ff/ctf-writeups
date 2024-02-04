@@ -635,6 +635,8 @@ får jeg printet flagget.
 
 ## easy_flag
 
+Flagg: `helsectf{maldoc=malicious_document}`
+
 ### Oppgave
 
 > Du har fått i oppgave å analysere et Excel-ark for å se om det kan inneholde
@@ -642,7 +644,14 @@ får jeg printet flagget.
 > 
 > I god stil er oppgavefilen pakket i en kryptert zip. (passord infected)
 
+Vedlegg:
+- [`easy_flag.zip`](./maldoc/easy_flag/easy_flag.zip)
+    - [`easy_flag.xlsm`](./maldoc/easy_flag/easy_flag.xlsm)
+
 ### Løsning
+
+Kjører `olevba` fra [`oletools`](https://github.com/decalage2/oletools) for å
+lete etter VBA-makroer. Da dukker flagget opp som en variabel i en funksjon.  
 
 
 ## hidden
