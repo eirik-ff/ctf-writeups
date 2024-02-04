@@ -223,6 +223,8 @@ men det skjer etter at flagget blir skrevet ut så det betyr ikke noe her.
 
 ## babyrev_rust 
 
+Flagg: `helsectf{rask_rust_rimer_relativt_riktig!}`
+
 ### Oppgave
 
 > En babyrev er litt Rust(en) i programmering. Hen har programmet inn et flagg i
@@ -234,6 +236,41 @@ men det skjer etter at flagget blir skrevet ut så det betyr ikke noe her.
 > hjelpe en ivrig REverser i å finne flagget.
 
 ### Løsning
+
+Jeg installerer Ghidra pluginen [GhidRust](https://github.com/DMaroo/GhidRust)
+og åpner binærfilen i Ghidra. Der blir jeg møtt med klønete dekopilert
+"Rust"/pseudo-C-kode som er vanskelig å forstå. Etter mye stirring, lesing om
+reversing av Rust
+([CheckPoint Research sin
+artikkel](https://research.checkpoint.com/2023/rust-binary-analysis-feature-by-feature/)
+synes jeg var hjelpsom), hjelp fra ChatGPT, og dekompilere små Rust-programmer
+for å skjønne flyten, kom jeg frem til at programmet leser inn en streng fra
+`argv` og tester om den strengen er lik flagget. Det er en del funksjoner som
+kjøres som `reverse`, `join`, og `rev`, men jeg skjønner ikke hvordan disse
+henger sammen. 
+
+Problemet er her måten strenger lagres på i Rust. Alle strenger lagres som en
+kontinuerlig blokk i minne som gjør at Ghidra ikke forstår hvor en streng
+slutter og en annen starter. Pseudokoden ser også ganske uforståelig ut:
+
+![](./rev/babyrev_rust/figures/flag_string_weird.png)
+
+Jeg kom frem til at strengen sikkert er definert som et array av `char`, og at
+dette blir oversatt til en variabel med en `char`/`string` og variabelen som
+ligger rett etter i minne er lengden. F.eks. `local_3b0 = "h"` og `local_3a8 =
+1` (etter betyr her lavere minneadresse). 
+
+Her er det da to måter å gå frem. Enten manuelt sette sammen alle `local_XXX`
+variabelene i rett rekkefølge basert på minneadressen, eller dynamisk. Jeg gir
+for dynamisk. Etter flagget er definert kommer det en skjekk:
+
+![](./rev/babyrev_rust/figures/eq_after_flag.png)
+
+`local_a8` er resultatet av `join` og `local_90` er det vi skrev inn som
+argument. Jeg åpner derfor binæren i GDB og setter et breakpoint på
+`call`-instruksjonen til `_<>::eq`. Siden `local_a8` er andre argument til
+funksjonen, vet vi at det lastes inn i `RSI`-registeret. Derfor kan vi skrive ut
+innholdet i minnet der `RSI` peker, og dermed får vi flagget. 
 
 
 ## StateOfGo
