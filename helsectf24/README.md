@@ -818,6 +818,8 @@ print(bytes(decoded).decode())
 
 ## bombzip2
 
+Flagg: `helsectf{b0mb3rm4n_s3nt_y0u_a_fl4g}`
+
 ### Oppgave
 
 > Vi har en bzip2-fil som inneholder et komprimert flagg, men den utpakka fila
@@ -825,7 +827,26 @@ print(bytes(decoded).decode())
 > du prøver å pakke den ut fyller du sannsynligvis harddiskene dine. Derfor er
 > oppgaven uløselig.
 
+Vedlegg:
+- [`flag.bz2`](./misc/bombzip2/flag.bz2)
+
 ### Løsning
+
+Jeg prøvde først med en naiv `bzgrep helsectf flag.bz2`, men etter å ha kjørt
+hele natten skjønte jeg at dette ikke var måten å gjøre det på.
+
+Ved å se på `hexdump -C flag.bz2` ser vi mange repeterende blokker, og én ulik
+blokk på slutten. Fra oppgaveteksten er det sannsynlig at siste blokk er
+flagget. Jeg skriver et python-script hvor jeg kopierer fra hexdump for å lage
+en fil med kun flagg-bytene, se
+[`fail-solve.py`](./misc/bombzip2/fail-solve.py). 
+
+Problemet er nå at `flag-block-only.bz2` ikke har rett checksum. Programmet
+`bzip2recover` skriver hver blokk til en egen fil, så jeg bruker dette for å få
+ut blokken, som da kan brukes til å få flagget med `bzcat
+rec00001flag-block-only.bz2`. Merk at den resulterende filen er fortsatt 12M
+stor, fylt nesten kun av `0x00`, men bash ignorerer disse når det skrives ut i
+terminalen.
 
 
 ## null pointer
