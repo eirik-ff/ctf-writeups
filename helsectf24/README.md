@@ -336,6 +336,8 @@ dager?
 
 ## Kontraktsignering
 
+Flagg: `helsectf{naar_man_jobber_med_krypto_b0r_man_vite_hva_man_gj0r}`
+
 ## Oppgave
 
 > Signaturtjenesten 2OpphøydIe signerer alle dine meldinger, bortsett fra den
@@ -343,7 +345,56 @@ dager?
 > 
 > Alle som har riktig signatur på kontrakten får flagget!
 
+Vedlegg: 
+- [`source.py`](./matte_og_krypto/kontraktsignering/source.py)
+
 ## Løsning
+
+Her skal vi gi rett RSA-signatur på en kjent streng. Utgitt kode viser at den
+signerer meldinger med vanlig RSA-signering, men uten å hashe meldingen. Dette
+gjør metoden sårbar til et bestemt angrep som hintes til i navnet "2OpphøydIe".
+
+Angrepet går ut på at siden vi kjenner meldingen kan vi gange den med `2^e` for
+å få `2s`, og deretter dele på `2` for å få rett signatur. Det ser ut som dette:
+
+```
+s = m^d  mod N
+m' = m * 2^e  mod N
+
+s' = (m')^d  mod N
+   = (m * 2^e)^e   mod N
+   = m^d * 2^(ed)  mod N
+   = s * 2  mod N
+
+s = s' / 2
+```
+
+Jeg lagde et Python-script hvor jeg limer inn `N` fra tjenesten og så regner det
+ut `s`: 
+
+```python
+from Crypto.Util.number import bytes_to_long, long_to_bytes
+from binascii  import hexlify, unhexlify
+
+e = 0x10001
+N = int(input("N (int) = "))
+print()
+
+contract = b"Dette er en superviktig kontrakt for veeldig viktige ting med store ord og uforstaaelige kruseduller."
+m = bytes_to_long(contract)
+
+e2 = pow(2, e, N)
+m2 = (m * e2) % N
+print("m' (hex) =", hexlify(long_to_bytes(m2)).decode())
+print()
+print()
+
+s2 = bytes_to_long(unhexlify(input("signature for m' (hex) = ")))
+s = s2 // 2
+
+print()
+print("s (hex) =", hexlify(long_to_bytes(s)).decode())
+```
 
 
 # rev
