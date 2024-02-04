@@ -203,6 +203,8 @@ Sharing, så jeg tilpasset koden til `joppe1`. Se
 
 ## joppe2
 
+Flagg: `helsectf{muldvarp_er_bra}`
+
 ### Oppgave
 
 > Redd Joppe, død eller levende!
@@ -216,6 +218,73 @@ Sharing, så jeg tilpasset koden til `joppe1`. Se
 > modulo her.
 
 ### Løsning
+
+Kobler til URLen og løser gåtene:
+
+1. Æ e ", å [ er lik, ka e æ?
+    - Svar: ???
+2. Hvis 'away away away' er klokka 3. Hva er 'come bye'?
+    - Svar: klokka 7
+    - Hemmelighet: `(2588682506107567,
+      655305480793967733879479427128553132958736140573542016023878)`
+3. Don't worry, be happy. Etter I kommer ii, men hva følger?
+    - Svar: ???
+4. Hvem er det som er sønn av mine foreldre, men likevel ikke min bror?
+    - Svar: meg selv
+    - Hemmelighet: `(4359708773407619,
+      655305480794013934214261797861718778141983069985929089695418)`
+5. Hva er ditt, men blir likevel brukt mest av andre?
+    - Svar: navnet ditt
+    - Hemmelighet: `(6634057562378419,
+      655305480794107806938926839990618969191800755240410150653418)`
+
+Her skal vi også løse Shamir's Secret Sharing, men utfordingen er at vi har 
+store tall. Hvis vi bruker Lagrange basis polynom for å gjøre interpoleringen
+som løser SSS er vi nødt til å bruke flyttall, og da får vi ikke rett presisjon.
+Løsningen er å gjøre det kun med ints fordi int i Python kan ha vilkårlig
+presisjon. 
+
+Siden vi vet at vi kun trenger 3 hemmeligheter løser jeg det for hånd. Jeg
+setter opp polynom-funksjonen `f(x) = y0 * l0(x) + y1 * l1(x) + y2 * l2(x)` der
+`li(x)` er Lagrange-polynomene, og løser ut til jeg har `[produkt] * f(x) = [sum
+av produkt]` ved å gange med felles nevner og forenkle. Slik unngår vi brøker
+som leder til flyttall. Deretter er det bare å evaluere på `x = 0` og
+heltallsdividere med produktet på venstre siden for å få koden. Til slutt gjør
+jeg koden om til bytes og finner flagget. Under er et Python-program for å løse
+dette. 
+
+```python
+from Crypto.Util.number import long_to_bytes
+
+def reconstruct(secret0: tuple[int, int],
+                secret1: tuple[int, int],
+                secret2: tuple[int, int]):
+    x0, y0 = secret0
+    x1, y1 = secret1
+    x2, y2 = secret2
+
+    # We can't use floating points as we lose precision, but ints in Python
+    # have arbitrary precision, so we do all calculations using ints.
+    # The formulas has been manually manipulated on paper to end up at the ones
+    # below.
+    prod = (x0 - x1) * (x0 - x2) * (x1 - x2)
+
+    f_prod = lambda x: y0 * (x - x1) * (x - x2) * (x1 - x2) -\
+                       y1 * (x - x0) * (x - x2) * (x0 - x2) +\
+                       y2 * (x - x0) * (x - x1) * (x0 - x1)
+
+    eval0 = f_prod(0)
+    assert eval0 % prod == 0, "Modulo test failed"
+    f0 = eval0 // prod
+    return f0
+
+
+secret2 = (2588682506107567, 655305480793967733879479427128553132958736140573542016023878)
+secret4 = (4359708773407619, 655305480794013934214261797861718778141983069985929089695418)
+secret5 = (6634057562378419, 655305480794107806938926839990618969191800755240410150653418)
+joppe2 = reconstruct(secret2, secret4, secret5)
+print(long_to_bytes(joppe2).decode())
+```
 
 
 ## joppe3
