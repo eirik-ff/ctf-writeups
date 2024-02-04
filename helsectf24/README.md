@@ -2,7 +2,39 @@
 
 # Innholdsfortegnelse
 
-TODO
+- [**matte og krypto**](#matte-og-krypto)
+    - [alder](#alder)
+    - [reisetid](#reisetid)
+    - [Larsw sekvens](#Larsw-sekvens)
+    - [joppe1](#joppe1)
+    - [joppe2](#joppe2)
+    - [joppe3](#joppe3)
+    - [Kontraktsignering](#Kontraktsignering)
+- [**rev**](#rev)
+    - [babyrev_fortran](#babyrev_fortran)
+    - [babyrev_rust](#babyrev_rust)
+    - [StateOfGo](#StateOfGo)
+    - [Seksjoneringsavdelingsdirektør
+      Gustavsen](#Seksjoneringsavdelingsdirektør-Gustavsen)
+    - [debug_rat](#debug_rat)
+- [**maldoc**](#maldoc)
+    - [easy_flag](#easy_flag)
+    - [hidden](#hidden)
+    - [Claim_in_mail](#Claim_in_mail)
+    - [Pass or fail?](#Pass-or-fail?)
+- [**misc**](#misc)
+    - [Skalerbar vektorgrafikk](#Skalerbar-vektorgrafikk)
+    - [tetris1](#tetris1)
+    - [tetris2](#tetris2)
+    - [tetris3](#tetris3)
+    - [tetris4](#tetris4)
+    - [bombzip2](#bombzip2)
+    - [null pointer](#null-pointer)
+    - [not cipher](#not-cipher)
+- [**stego**](#stego)
+    - [image processing 1](#image-processing-1)
+    - [image processing 2](#image-processing-2)
+    - [prikker](#prikker)
 
 
 # matte og krypto
