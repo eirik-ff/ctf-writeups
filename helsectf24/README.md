@@ -670,6 +670,61 @@ Vedlegg:
 
 ### Løsning
 
+Det er flere måter å løse denne på, men jeg løste den ved å finne hver del av
+flagget og sette sammen. Jeg åpnet binæren i IDA Free og gikk gjennom koden. 
+
+Vi får vite om tre kommandoer, `LS`, `CAT`, og `EXEC`. Ved å lese gjennom
+pseudokoden i IDA finner vi der `CAT` blir tolket:
+
+![](./rev/debug_rat/figures/cat1337.png)
+
+Den bygger opp et array med fire strenger og velger en tilfeldig av disse som
+skrives ut. Hvis vi kun skriver `CAT` velges det kun blant de tre første, men
+ved å legge til ` 1337` blir strengen 8 lang og den tilfeldige indeksen blir
+satt til 3. Da får vi innholdet av `cat_ascii.txt` og får del 1 av flagget: 
+
+```
+> CAT 1337
+    /\___/\
+   /       \
+  l  u   u  l
+--l----*----l--
+   \   w   /     - Meow!
+   ▎ ======
+   /       \ __
+   l        l\ \
+   l        l/ /   flag part1 is:
+   l  l l   l /    helsectf{r3meMber_
+   \ ml lm /_/
+```
+
+Går vi videre i `main` finner vi en sjekk som tester om input er nøyaktig 6 lang
+og om hvert input tegn ikke er NULL byte:
+
+![](./rev/debug_rat/figures/part2_if.png)
+
+Variabelen som blir satt er en global variabel som blir sjekket i
+signal handleren. Det er en signal handler som kjører hver gang `SIGALRM` blir
+signalisert, og dette skjer annenhvert sekund. 
+
+![](./rev/debug_rat/figures/signal_handler.png)
+
+Når den globale variabelen er satt blir det skrevet noe ut til skjermen. Jeg
+sender til `AAAAAA` og får del 2 av flagget: `_Netbus_aNd_Back`. Her er det
+tydeligvis en feil da den første understreken ikke skal være med, så del 2 er
+da `Netbus_aNd_Back`. 
+
+Videre i `main` finner vi en sjekk som input er `HINT`. 
+
+![](./rev/debug_rat/figures/hint_if.png)
+
+Da skrives det ut et hint om at vi ikke finner hele flagget her. Går vi inn i
+`print_hint` ser vi at det er mer kode enn det som skriver ut hintet, og lenger
+nede finner vi en streng `You need moar skillz to get the whole flag. A start is
+this flag part: Orifice???}`, og dette ser ut til å være del 3 av flagget. 
+
+Setter vi sammen alle delene får vi flagget. 
+
 
 # maldoc
 
