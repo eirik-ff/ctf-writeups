@@ -2,7 +2,8 @@ import requests
 
 # define minimal variables for the value of each nibble
 n0 = "int()"
-n1 = n0 + "**" + n0
+#n1 = n0 + "**" + n0
+n1 = "(not())"
 n2 = n1 + "+" + n1
 n3 = n2 + "+" + n1
 n4 = n2 + "+" + n2
@@ -111,10 +112,10 @@ print(len(payload))
 
 
 # not cipher
-url = "https://helsectf2024-2da207d37b091b1b4dff-not-cipher.chals.io"
+#url = "https://helsectf2024-2da207d37b091b1b4dff-not-cipher.chals.io"
 
 # short not cipher
-#url = "https://helsectf2024-2da207d37b091b1b4dff-short-not-cipher.chals.io"
+url = "https://helsectf2024-2da207d37b091b1b4dff-short-not-cipher.chals.io"
 
 params = {"program": payload}
 resp = requests.get(url, params=params)

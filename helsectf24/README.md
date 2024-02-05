@@ -1065,6 +1065,17 @@ rett verdi, og deretter wrappe alt med `chr(...)`. Hver `chr(...)` kan vi legge
 sammen til en komplett streng, som vi så sender til samme payload som `null
 pointer`. Dette gir flagget for `not cipher`. 
 
+## short not cipher
+
+Flagg: `helsectf{h4rd3r_b3tt3r_f4s73r_sh0rt3r}` 
+
+### Oppgave
+
+> Denne oppgaven er helt lik `not cipher`, bare at programmet du sender inn må
+> være kortere enn 5000 tegn.
+
+### Løsning
+
 Mitt første utkast var på rundt 93 000 bytes, og alt for lang for `short not
 cipher` hvor vi har maks 5 000 bytes. Jeg har jobbet mye med å prøve å kutte ned
 på antall bytes, men kommer ikke under ~5 800. Forsøket mitt ligger i
@@ -1075,6 +1086,10 @@ Hvert ASCII-tegn har en hex-verdi `0xXY` som i base 10 betyr `X * 16 + Y`. Ved �
 definere korteste formulering for tallene 0-16 (`n0` til `n16` i scriptet) kan
 vi bygge opp samme ASCII-verdi som de lange summene over som vi sender inn i
 `chr(...)`. Dette gir god forbedring, men ikke nok. 
+
+Etter endt CTF ser jeg folk har funnet `(not())` gir tallet `1`, så ved å
+erstatte `int()**int()` med det får jeg total payload på ca. 3 800 bytes, og da
+får vi flagget. 
 
 
 # stego
